@@ -1,0 +1,182 @@
+// Prisma schema for AllivanFresh WhatsApp Bot
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// Product Categories
+enum ProductCategory {
+  FISH
+  CHICKEN
+  VEGETABLES
+  VALUE_BASKET
+}
+
+// Availability Status
+enum AvailabilityStatus {
+  IN_STOCK
+  AVAILABLE_ON_REQUEST
+  OUT_OF_STOCK
+}
+
+// Order Status
+enum OrderStatus {
+  PENDING           // Created, awaiting confirmation
+  CONFIRMED         // Customer confirmed
+  EMAIL_SENT        // Email sent to business
+  PREPARING         // Business preparing
+  DELIVERED         // Completed
+  CANCELLED         // Cancelled
+}
+
+// Products Table
+model Product {
+  id                  String              @id @default(uuid())
+  name                String              // e.g., "Tilapia Whole"
+  nameSwahili         String?             // e.g., "Samaki Tilapia"
+  category            ProductCategory
+  description         String
+  descriptionSwahili  String?
+
+  // Category-specific attributes (JSONB for flexibility)
+  attributes          Json                // { fishType: "WHOLE", size: "1kg", origin: "Lake Victoria" }
+
+  // Pricing
+  basePrice           Decimal             @db.Decimal(10, 2)
+  unit                String              // "per kg", "per piece", "per bundle"
+
+  // Availability
+  availability        AvailabilityStatus  @default(IN_STOCK)
+  availabilityNotes   String?             // "Call for large orders"
+
+  // Metadata
+  imageUrl            String?
+  displayOrder        Int                 @default(0)
+  isActive            Boolean             @default(true)
+  createdAt           DateTime            @default(now())
+  updatedAt           DateTime            @updatedAt
+
+  // Relations
+  orderItems          OrderItem[]
+  recommendations     ProductRecommendation[] @relation("ProductRecommendations")
+  recommendedBy       ProductRecommendation[] @relation("RecommendedProducts")
+
+  @@index([category])
+  @@index([availability])
+  @@index([isActive])
+}
+
+// Product Recommendations (collaborative filtering)
+model ProductRecommendation {
+  id                String    @id @default(uuid())
+  productId         String
+  recommendedId     String
+  strength          Float     @default(1.0)  // Co-purchase frequency score
+
+  product           Product   @relation("ProductRecommendations", fields: [productId], references: [id], onDelete: Cascade)
+  recommended       Product   @relation("RecommendedProducts", fields: [recommendedId], references: [id], onDelete: Cascade)
+
+  @@unique([productId, recommendedId])
+  @@index([productId])
+}
+
+// Customers
+model Customer {
+  id                String      @id @default(uuid())
+  phoneNumber       String      @unique  // WhatsApp number (with country code)
+  firstName         String?
+  lastName          String?
+
+  // Preferences
+  preferredLanguage String?     // "en", "sw", "mixed"
+
+  // Location
+  deliveryLocation  String?     // Last used delivery location in Nairobi
+
+  // Metadata
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+  lastActiveAt      DateTime    @default(now())
+
+  // Relations
+  orders            Order[]
+  conversations     Conversation?
+
+  @@index([phoneNumber])
+}
+
+// Orders
+model Order {
+  id                String        @id @default(uuid())
+  orderNumber       String        @unique  // e.g., "AFN-20260205-001"
+
+  customerId        String
+  customer          Customer      @relation(fields: [customerId], references: [id])
+
+  // Delivery Details
+  deliveryLocation  String        // Address in Nairobi
+  deliveryDate      DateTime      // Tomorrow's date
+  deliveryNotes     String?       // Special instructions
+
+  // Order Details
+  status            OrderStatus   @default(PENDING)
+  totalAmount       Decimal       @db.Decimal(10, 2)
+
+  // Metadata
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  confirmedAt       DateTime?
+  emailSentAt       DateTime?
+
+  // Relations
+  items             OrderItem[]
+
+  @@index([customerId])
+  @@index([orderNumber])
+  @@index([status])
+  @@index([deliveryDate])
+}
+
+// Order Items
+model OrderItem {
+  id                String    @id @default(uuid())
+
+  orderId           String
+  order             Order     @relation(fields: [orderId], references: [id], onDelete: Cascade)
+
+  productId         String
+  product           Product   @relation(fields: [productId], references: [id])
+
+  quantity          Decimal   @db.Decimal(10, 2)  // Support 0.5 kg, etc.
+  unitPrice         Decimal   @db.Decimal(10, 2)  // Price at time of order
+  totalPrice        Decimal   @db.Decimal(10, 2)  // quantity * unitPrice
+
+  notes             String?   // Special requests
+
+  @@index([orderId])
+  @@index([productId])
+}
+
+// Conversation State (for active sessions)
+model Conversation {
+  id                String    @id @default(uuid())
+
+  customerId        String    @unique
+  customer          Customer  @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  // State Management
+  state             Json      // Current conversation state (cart, current step, etc.)
+  messageHistory    Json[]    // Last N messages for context
+
+  // Metadata
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+  expiresAt         DateTime  // Auto-cleanup after inactivity
+
+  @@index([expiresAt])
+}
