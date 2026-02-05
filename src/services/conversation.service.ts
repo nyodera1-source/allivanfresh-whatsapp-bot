@@ -57,7 +57,7 @@ export class ConversationService {
       return getDefaultState();
     }
 
-    return conversation.state as ConversationState;
+    return conversation.state as unknown as ConversationState;
   }
 
   /**
