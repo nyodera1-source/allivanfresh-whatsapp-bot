@@ -7,13 +7,19 @@ export interface WhatsAppIncomingMessage {
   from: string; // Phone number with country code
   to: string;
   timestamp: string;
-  type: 'text' | 'image' | 'document' | 'audio' | 'video';
+  type: 'text' | 'image' | 'document' | 'audio' | 'video' | 'location';
   text?: {
     body: string;
   };
   image?: {
     url: string;
     caption?: string;
+  };
+  location?: {
+    latitude: number;
+    longitude: number;
+    name?: string;
+    address?: string;
   };
 }
 

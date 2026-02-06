@@ -259,9 +259,9 @@ Now respond to the customer's message following these guidelines.`;
    * Format delivery info for system prompt
    */
   private formatDeliveryInfo(state: ConversationState, deliveryQuote: DeliveryQuote | null, unknownLocation?: string): string {
-    // Location couldn't be found on the map - ask for clarification
+    // Location couldn't be found on the map - ask for clarification or pin
     if (unknownLocation) {
-      return `\n# LOCATION NOT FOUND\n- The customer said "${unknownLocation}" but our system could not find it on the map.\n- Ask them to clarify using specific local directions, nearby landmarks, or roads.\n- Use Kisumu-area references like: "on Nairobi road?", "past [landmark] towards [town]?", "near [junction]?"\n- NEVER use generic options like "within town / outside town"\n`;
+      return `\n# LOCATION NOT FOUND\n- The customer said "${unknownLocation}" but our system could not find it on the map.\n- Ask them to either:\n  1. Clarify using specific local directions (nearby roads, landmarks, junctions)\n  2. OR share their WhatsApp location pin (tap the + or 📎 icon → Location → Send your current location)\n- Use Kisumu-area references like: "on Nairobi road?", "past [landmark] towards [town]?", "near [junction]?"\n- NEVER use generic options like "within town / outside town"\n- Mention that sharing a location pin will give them the most accurate delivery fee\n`;
     }
 
     if (deliveryQuote) {

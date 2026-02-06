@@ -4,7 +4,7 @@ import { ConversationService } from '../services/conversation.service';
 import { ProductService } from '../services/product.service';
 import { RecommendationService } from '../services/recommendation.service';
 import { OrderController } from './order.controller';
-import { getDeliveryQuote, DeliveryQuote } from '../services/delivery.service';
+import { getDeliveryQuote, getDeliveryQuoteFromCoords, DeliveryQuote } from '../services/delivery.service';
 
 import { WhatsAppIncomingMessage } from '../models/whatsapp-message';
 import { ClaudeActionType, ConversationStep } from '../config/constants';
@@ -33,6 +33,14 @@ export class MessageController {
     try {
       const from = message.from;
       const text = message.text?.body;
+      const location = message.location;
+
+      // Handle location pin messages
+      if (message.type === 'location' && location) {
+        console.log(`[Message] Received location pin from ${from}: ${location.latitude}, ${location.longitude}`);
+        await this.handleLocationMessage(from, location);
+        return;
+      }
 
       if (!text) {
         console.log('[Message] Ignoring non-text message');
@@ -75,7 +83,7 @@ export class MessageController {
           state.deliveryLocation = text;
           await this.conversationService.updateState(customer.id, state);
         } else {
-          // Geocoding failed - Claude should ask for clarification
+          // Geocoding failed - Claude should ask for clarification or location pin
           locationNotFound = true;
         }
       }
@@ -118,6 +126,58 @@ export class MessageController {
         console.error('[Message] Failed to send error message:', sendError);
       }
     }
+  }
+
+  /**
+   * Handle a WhatsApp location pin message
+   */
+  private async handleLocationMessage(
+    from: string,
+    location: { latitude: number; longitude: number; name?: string; address?: string }
+  ): Promise<void> {
+    const customer = await this.conversationService.getOrCreateCustomer(from);
+    const state = await this.conversationService.getState(customer.id);
+
+    // Calculate delivery quote from exact GPS coordinates
+    const locationLabel = location.name || location.address || `Pinned location`;
+    const deliveryQuote = getDeliveryQuoteFromCoords(
+      location.latitude,
+      location.longitude,
+      locationLabel
+    );
+
+    // Update state with delivery info
+    state.deliveryDistanceKm = deliveryQuote.distanceKm;
+    state.deliveryFee = deliveryQuote.fee;
+    state.deliveryZone = deliveryQuote.zone;
+    state.deliveryLocation = locationLabel;
+    await this.conversationService.updateState(customer.id, state);
+
+    // Get products and history for Claude
+    const products = await this.productService.getAllProducts();
+    const productCatalog = this.productService.formatProductCatalog(products);
+    const messageHistory = await this.conversationService.getMessageHistory(customer.id);
+    let recommendations = '';
+    if (state.cart.length > 0) {
+      const recommendedProducts = await this.recommendationService.getRecommendations(state.cart);
+      recommendations = this.recommendationService.formatRecommendations(recommendedProducts);
+    }
+
+    // Tell Claude about the pinned location
+    const userMessage = `[Customer shared their location pin: ${locationLabel}]`;
+    const claudeResponse = await this.claudeService.processMessage(
+      userMessage,
+      state,
+      productCatalog,
+      recommendations,
+      messageHistory,
+      deliveryQuote
+    );
+
+    // Execute actions and send response
+    await this.executeActions(customer.id, claudeResponse.actions, state);
+    await this.whatsappService.sendMessageWithRetry(from, claudeResponse.message);
+    await this.conversationService.addMessageToHistory(customer.id, userMessage, claudeResponse.message);
   }
 
   /**

@@ -163,3 +163,40 @@ export async function getDeliveryQuote(
 
   return quote;
 }
+
+/**
+ * Get delivery quote from GPS coordinates (WhatsApp location pin)
+ */
+export function getDeliveryQuoteFromCoords(
+  lat: number,
+  lon: number,
+  locationLabel?: string
+): DeliveryQuote {
+  const straightLineDistance = haversineDistance(
+    KISUMU_CENTER.lat,
+    KISUMU_CENTER.lon,
+    lat,
+    lon
+  );
+
+  const roadDistance = Math.round(straightLineDistance * ROAD_MULTIPLIER);
+  const zone = getZone(roadDistance);
+  const fee = calculateFee(roadDistance);
+
+  const quote: DeliveryQuote = {
+    locationName: locationLabel || `GPS (${lat.toFixed(4)}, ${lon.toFixed(4)})`,
+    distanceKm: roadDistance,
+    fee,
+    zone,
+  };
+
+  if (zone === 'far') {
+    quote.minimumOrderRequired = 5000;
+  }
+
+  console.log(
+    `[Delivery] Quote from GPS [${lat}, ${lon}]: ${roadDistance}km, zone=${zone}, fee=KES ${fee}`
+  );
+
+  return quote;
+}

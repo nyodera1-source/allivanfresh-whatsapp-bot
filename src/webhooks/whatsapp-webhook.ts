@@ -97,19 +97,53 @@ router.post('/', async (req: Request, res: Response) => {
 
     console.log('[Webhook] Extracted fields - event:', event, 'messageBody:', messageBody, 'remoteJid:', remoteJid);
 
-    if (event && messageBody) {
-      console.log('[Webhook] Processing wasenderapi message format');
+    // Extract phone number from remoteJid or cleanedSenderPn
+    let phoneNumber = cleanedSenderPn || '';
+    if (!phoneNumber && remoteJid) {
+      phoneNumber = remoteJid.split('@')[0];
+    }
+    if (!phoneNumber && senderPn) {
+      phoneNumber = senderPn.split('@')[0];
+    }
 
-      // Extract phone number from remoteJid or cleanedSenderPn
-      // remoteJid format: "220804788830226@lid" or "254725923814@s.whatsapp.net"
-      // cleanedSenderPn format: "254725923814"
-      let phoneNumber = cleanedSenderPn || '';
-      if (!phoneNumber && remoteJid) {
-        phoneNumber = remoteJid.split('@')[0];
+    // Check for location message
+    const locationMsg = payload.message?.locationMessage ||
+                        messagesObj?.message?.locationMessage ||
+                        dataMessages?.message?.locationMessage;
+
+    if (event && locationMsg && phoneNumber) {
+      console.log('[Webhook] Processing location message');
+
+      const messageId = payload.message?.id || payload.key?.id || '';
+      const dedupKey = messageId || `${phoneNumber}:location:${Math.floor(Date.now() / 5000)}`;
+
+      if (isDuplicate(dedupKey)) {
+        console.log('[Webhook] Skipping duplicate location message');
+        return;
       }
-      if (!phoneNumber && senderPn) {
-        phoneNumber = senderPn.split('@')[0];
-      }
+
+      const message: WhatsAppIncomingMessage = {
+        id: messageId || Date.now().toString(),
+        from: phoneNumber,
+        to: '',
+        timestamp: payload.timestamp?.toString() || Date.now().toString(),
+        type: 'location',
+        location: {
+          latitude: locationMsg.degreesLatitude,
+          longitude: locationMsg.degreesLongitude,
+          name: locationMsg.name || undefined,
+          address: locationMsg.address || undefined,
+        },
+      };
+
+      messageController
+        .handleIncomingMessage(message)
+        .catch((error) => {
+          console.error('[Webhook] Error processing location message:', error);
+        });
+    }
+    else if (event && messageBody) {
+      console.log('[Webhook] Processing wasenderapi message format');
 
       // Build a unique message ID for deduplication
       const messageId = payload.message?.id || payload.key?.id || payload.data?.messages?.key?.id || '';
