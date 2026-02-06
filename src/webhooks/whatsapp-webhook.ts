@@ -57,19 +57,24 @@ router.post('/', async (req: Request, res: Response) => {
     console.log('[Webhook] Received payload:', JSON.stringify(payload, null, 2));
 
     // Check if this is a wasenderapi format payload
-    // Fields can be at top level, nested inside "key", or inside "messages" object
+    // Fields can be at top level, in "key", in "messages", or in "data.messages"
     // Note: wasenderapi sends "messages" as an object, not array
-    const messagesObj = payload.messages as any; // Cast to any since it can be object or array
+    const messagesObj = payload.messages as any;
+    const dataMessages = payload.data?.messages as any;
 
-    const event = payload.event || payload.key?.event || messagesObj?.event;
+    const event = payload.event || payload.key?.event || messagesObj?.event || dataMessages?.event;
     const messageBody = payload.messageBody || payload.message?.conversation || payload.key?.messageBody ||
-                        messagesObj?.messageBody || messagesObj?.message?.conversation;
+                        messagesObj?.messageBody || messagesObj?.message?.conversation ||
+                        dataMessages?.messageBody || dataMessages?.message?.conversation;
     const remoteJid = payload.remoteJid || payload.key?.remoteJid || messagesObj?.remoteJid ||
-                      messagesObj?.key?.remoteJid || payload.data?.remoteJid;
+                      messagesObj?.key?.remoteJid || payload.data?.remoteJid ||
+                      dataMessages?.remoteJid || dataMessages?.key?.remoteJid;
     const cleanedSenderPn = payload.cleanedSenderPn || payload.key?.cleanedSenderPn ||
-                            messagesObj?.cleanedSenderPn || messagesObj?.key?.cleanedSenderPn;
+                            messagesObj?.cleanedSenderPn || messagesObj?.key?.cleanedSenderPn ||
+                            dataMessages?.cleanedSenderPn || dataMessages?.key?.cleanedSenderPn;
     const senderPn = payload.senderPn || payload.key?.senderPn ||
-                     messagesObj?.senderPn || messagesObj?.key?.senderPn;
+                     messagesObj?.senderPn || messagesObj?.key?.senderPn ||
+                     dataMessages?.senderPn || dataMessages?.key?.senderPn;
 
     console.log('[Webhook] Extracted fields - event:', event, 'messageBody:', messageBody, 'remoteJid:', remoteJid);
 
