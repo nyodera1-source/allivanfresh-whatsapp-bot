@@ -22,7 +22,7 @@ const envSchema = z.object({
 
   // Claude API
   ANTHROPIC_API_KEY: z.string().min(1, 'ANTHROPIC_API_KEY is required'),
-  CLAUDE_MODEL: z.string().default('claude-3-5-sonnet-20241022'),
+  CLAUDE_MODEL: z.string().default('claude-sonnet-4-5-20250929'),
   CLAUDE_MAX_TOKENS: z.string().transform(Number).default('2048'),
 
   // Email
