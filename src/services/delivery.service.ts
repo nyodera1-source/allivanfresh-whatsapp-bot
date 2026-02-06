@@ -13,6 +13,14 @@ const KISUMU_CENTER = {
 // Road distance multiplier (straight-line to road distance approximation)
 const ROAD_MULTIPLIER = 1.3;
 
+// Max straight-line distance we trust from Nominatim (km).
+// If result is further than this, it's likely a wrong geocode.
+const MAX_TRUSTED_DISTANCE_KM = 100;
+
+// Viewbox around Kisumu (~100km radius) to bias Nominatim results
+// Format: left,top,right,bottom (lon1,lat1,lon2,lat2)
+const KISUMU_VIEWBOX = '33.8,-0.9,35.7,0.7';
+
 export interface DeliveryQuote {
   locationName: string;
   distanceKm: number; // road-adjusted distance
@@ -22,15 +30,40 @@ export interface DeliveryQuote {
 }
 
 /**
+ * Clean location text for geocoding by stripping road direction references
+ * that confuse Nominatim (e.g., "on Nairobi road" → Nominatim finds Nairobi city)
+ */
+function cleanLocationForGeocoding(locationName: string): string {
+  let cleaned = locationName;
+
+  // Remove directional phrases like "on Nairobi road", "towards Ahero", "past Alendu"
+  cleaned = cleaned.replace(/\b(on|along|towards?|past|near|before|after|opposite|behind|next\s+to|by|via)\s+[\w\s]+\b(road|highway|rd|hwy|avenue|ave|street|st|way|junction|jn|jnc)\b/gi, '');
+  // Remove "on [Name] road" patterns
+  cleaned = cleaned.replace(/\bon\s+[\w]+\s+road\b/gi, '');
+  // Remove standalone direction references like "Nairobi road side", "Busia road"
+  cleaned = cleaned.replace(/\b(nairobi|busia|kakamega|ahero|kericho|nandi)\s+(road|highway|rd|hwy|side|direction)\b/gi, '');
+
+  // Clean up extra whitespace and commas
+  cleaned = cleaned.replace(/\s+/g, ' ').replace(/,\s*,/g, ',').trim();
+  cleaned = cleaned.replace(/^[,\s]+|[,\s]+$/g, '');
+
+  return cleaned || locationName; // fallback to original if cleaning removed everything
+}
+
+/**
  * Geocode a location name to coordinates using Nominatim
+ * Uses viewbox to bias results around Kisumu and validates distance
  */
 async function geocodeLocation(
   locationName: string
 ): Promise<{ lat: number; lon: number } | null> {
   try {
-    // Search with Kisumu context for better results
-    const query = `${locationName}, Kisumu, Kenya`;
-    const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1&countrycodes=ke`;
+    const cleanedName = cleanLocationForGeocoding(locationName);
+    console.log(`[Delivery] Geocoding: "${locationName}" → cleaned: "${cleanedName}"`);
+
+    // Search with Kisumu context + viewbox bias for better results
+    const query = `${cleanedName}, Kisumu, Kenya`;
+    const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=3&countrycodes=ke&viewbox=${KISUMU_VIEWBOX}&bounded=0`;
 
     const response = await fetch(url, {
       headers: {
@@ -43,11 +76,14 @@ async function geocodeLocation(
       return null;
     }
 
-    const results = (await response.json()) as Array<{ lat: string; lon: string }>;
+    const results = (await response.json()) as Array<{ lat: string; lon: string; display_name: string }>;
 
-    if (results.length === 0) {
-      // Try without Kisumu context for broader search
-      const broadUrl = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(locationName + ', Kenya')}&format=json&limit=1&countrycodes=ke`;
+    // Try to find the closest result to Kisumu from up to 3 results
+    let bestResult = findClosestToKisumu(results);
+
+    if (!bestResult) {
+      // Try without Kisumu context but still with viewbox
+      const broadUrl = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(cleanedName + ', Kenya')}&format=json&limit=3&countrycodes=ke&viewbox=${KISUMU_VIEWBOX}&bounded=0`;
       const broadResponse = await fetch(broadUrl, {
         headers: {
           'User-Agent': 'AllivanFresh-WhatsApp-Bot/1.0',
@@ -56,23 +92,59 @@ async function geocodeLocation(
 
       if (!broadResponse.ok) return null;
 
-      const broadResults = (await broadResponse.json()) as Array<{ lat: string; lon: string }>;
-      if (broadResults.length === 0) return null;
-
-      return {
-        lat: parseFloat(broadResults[0].lat),
-        lon: parseFloat(broadResults[0].lon),
-      };
+      const broadResults = (await broadResponse.json()) as Array<{ lat: string; lon: string; display_name: string }>;
+      bestResult = findClosestToKisumu(broadResults);
     }
 
-    return {
-      lat: parseFloat(results[0].lat),
-      lon: parseFloat(results[0].lon),
-    };
+    if (!bestResult) {
+      console.log(`[Delivery] No results found for "${cleanedName}"`);
+      return null;
+    }
+
+    // Sanity check: if the best result is still too far from Kisumu, reject it
+    const straightLine = haversineDistance(
+      KISUMU_CENTER.lat, KISUMU_CENTER.lon,
+      bestResult.lat, bestResult.lon
+    );
+
+    if (straightLine > MAX_TRUSTED_DISTANCE_KM) {
+      console.log(`[Delivery] Result for "${locationName}" is ${Math.round(straightLine)}km from Kisumu - too far, likely wrong geocode`);
+      return null;
+    }
+
+    console.log(`[Delivery] Geocoded "${locationName}" → [${bestResult.lat}, ${bestResult.lon}] (${Math.round(straightLine)}km from Kisumu)`);
+    return bestResult;
   } catch (error: any) {
     console.error('[Delivery] Geocoding error:', error.message);
     return null;
   }
+}
+
+/**
+ * From multiple Nominatim results, pick the one closest to Kisumu
+ */
+function findClosestToKisumu(
+  results: Array<{ lat: string; lon: string; display_name: string }>
+): { lat: number; lon: number } | null {
+  if (results.length === 0) return null;
+
+  let closest: { lat: number; lon: number } | null = null;
+  let closestDistance = Infinity;
+
+  for (const result of results) {
+    const lat = parseFloat(result.lat);
+    const lon = parseFloat(result.lon);
+    const dist = haversineDistance(KISUMU_CENTER.lat, KISUMU_CENTER.lon, lat, lon);
+
+    console.log(`[Delivery]   Candidate: "${result.display_name}" → ${Math.round(dist)}km from Kisumu`);
+
+    if (dist < closestDistance) {
+      closestDistance = dist;
+      closest = { lat, lon };
+    }
+  }
+
+  return closest;
 }
 
 /**
