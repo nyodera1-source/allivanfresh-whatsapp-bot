@@ -36,9 +36,9 @@ export enum ClaudeIntent {
 
 // Business configuration
 export const BUSINESS_CONFIG = {
-  name: 'AllivanFresh Kenya',
-  tagline: 'Fresh from Kisumu to your door',
-  deliveryArea: 'Nairobi',
+  name: 'AllivanFresh',
+  tagline: 'Fresh to your door in Kisumu',
+  deliveryArea: 'Kisumu',
   sourceLocation: 'Kisumu',
   deliveryModel: 'next-day',
   paymentMethod: 'cash-on-delivery',

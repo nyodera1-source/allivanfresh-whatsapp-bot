@@ -1,7 +1,7 @@
 {
   "name": "allivanfresh-whatsapp-bot",
   "version": "1.0.0",
-  "description": "AI-powered WhatsApp e-commerce bot for AllivanFresh Kenya",
+  "description": "AI-powered WhatsApp e-commerce bot for AllivanFresh",
   "main": "dist/index.js",
   "scripts": {
     "dev": "tsx watch src/index.ts",
@@ -15,7 +15,7 @@
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": ["whatsapp", "ecommerce", "claude-ai", "kenya"],
-  "author": "AllivanFresh Kenya",
+  "author": "AllivanFresh",
   "license": "ISC",
   "dependencies": {
     "@anthropic-ai/sdk": "^0.32.1",

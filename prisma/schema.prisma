@@ -96,7 +96,7 @@ model Customer {
   preferredLanguage String?     // "en", "sw", "mixed"
 
   // Location
-  deliveryLocation  String?     // Last used delivery location in Nairobi
+  deliveryLocation  String?     // Last used delivery location in Kisumu
 
   // Metadata
   createdAt         DateTime    @default(now())
@@ -119,7 +119,7 @@ model Order {
   customer          Customer      @relation(fields: [customerId], references: [id])
 
   // Delivery Details
-  deliveryLocation  String        // Address in Nairobi
+  deliveryLocation  String        // Address in Kisumu
   deliveryDate      DateTime      // Tomorrow's date
   deliveryNotes     String?       // Special instructions
 

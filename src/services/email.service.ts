@@ -28,7 +28,7 @@ export class EmailService {
       const emailHtml = this.buildOrderEmailHtml(order);
 
       const info = await this.transporter.sendMail({
-        from: `"AllivanFresh Kenya" <${config.GMAIL_USER}>`,
+        from: `"AllivanFresh" <${config.GMAIL_USER}>`,
         to: config.ORDER_EMAIL_RECIPIENT,
         subject: `New Order ${order.orderNumber} - ${order.customer.phoneNumber}`,
         html: emailHtml,
@@ -128,7 +128,7 @@ export class EmailService {
 </head>
 <body>
   <div class="header">
-    <h1>🐟 New Order - AllivanFresh Kenya</h1>
+    <h1>🐟 New Order - AllivanFresh</h1>
     <h2>${order.orderNumber}</h2>
   </div>
 
