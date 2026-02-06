@@ -97,7 +97,6 @@ export class ClaudeService {
     productCatalog: string,
     recommendations: string
   ): string {
-    const isOpen = this.isBusinessHoursOpen();
     const cartSummary = this.formatCartSummary(state.cart);
 
     return `You are an AI assistant for AllivanFresh, a fresh food delivery service based in Kisumu, specializing in fish, chicken, and vegetables.
@@ -106,7 +105,7 @@ export class ClaudeService {
 - Products: Fresh fish, chicken, vegetables
 - Location: Based in Kisumu, delivering within Kisumu town
 - Delivery: Same day or next day delivery within Kisumu
-- Operating Hours: 8am-6pm EAT (${isOpen ? 'Currently OPEN ✅' : 'Currently CLOSED ❌'})
+- We are an online store - ALWAYS OPEN for orders 24/7
 - Payment: Cash on delivery (M-PESA coming soon)
 
 # YOUR ROLE
@@ -117,7 +116,6 @@ export class ClaudeService {
 - Confirm orders before placing
 
 # IMPORTANT RULES
-${!isOpen ? '- ⚠️ INFORM customers we are currently CLOSED and will respond when we reopen at 8am EAT' : ''}
 - ALWAYS be friendly, helpful, and culturally appropriate for Kenyan customers
 - Use simple language - many customers are not tech-savvy
 - Accept mixed English/Swahili naturally (e.g., "Nataka samaki mbili" = "I want two fish")
@@ -247,16 +245,4 @@ Now respond to the customer's message following these guidelines.`;
     return `# CURRENT CART\n${items}\n\nTotal: KES ${total}`;
   }
 
-  /**
-   * Check if business is currently open (simplified check)
-   */
-  private isBusinessHoursOpen(): boolean {
-    const now = new Date();
-    const nairobiTime = new Date(
-      now.toLocaleString('en-US', { timeZone: config.TIMEZONE })
-    );
-    const currentHour = nairobiTime.getHours();
-
-    return currentHour >= config.BUSINESS_HOURS_START && currentHour < config.BUSINESS_HOURS_END;
-  }
 }
