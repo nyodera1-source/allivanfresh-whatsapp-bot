@@ -4,7 +4,7 @@ import { ConversationService } from '../services/conversation.service';
 import { ProductService } from '../services/product.service';
 import { RecommendationService } from '../services/recommendation.service';
 import { OrderController } from './order.controller';
-import { getDeliveryQuote, getDeliveryQuoteFromCoords, DeliveryQuote } from '../services/delivery.service';
+import { getDeliveryQuote, getDeliveryQuoteFromCoords, getDeliveryQuoteFromDistance, parseKmFromText, DeliveryQuote } from '../services/delivery.service';
 
 import { WhatsAppIncomingMessage } from '../models/whatsapp-message';
 import { ClaudeActionType, ConversationStep } from '../config/constants';
@@ -75,7 +75,17 @@ export class MessageController {
       let deliveryQuote: DeliveryQuote | null = null;
       let locationNotFound = false;
       if (state.step === ConversationStep.REQUESTING_LOCATION) {
+        // Try: 1) Known locations + Nominatim via getDeliveryQuote
         deliveryQuote = await getDeliveryQuote(text);
+
+        // 2) If that failed, check if customer gave a km distance (e.g. "about 10km")
+        if (!deliveryQuote) {
+          const kmDistance = parseKmFromText(text);
+          if (kmDistance) {
+            deliveryQuote = getDeliveryQuoteFromDistance(kmDistance, text);
+          }
+        }
+
         if (deliveryQuote) {
           state.deliveryDistanceKm = deliveryQuote.distanceKm;
           state.deliveryFee = deliveryQuote.fee;
@@ -83,7 +93,7 @@ export class MessageController {
           state.deliveryLocation = text;
           await this.conversationService.updateState(customer.id, state);
         } else {
-          // Geocoding failed - Claude should ask for clarification or location pin
+          // All lookups failed - Claude should ask for clarification or location pin
           locationNotFound = true;
         }
       }

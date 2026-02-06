@@ -1,6 +1,7 @@
 /**
  * Delivery service - calculates distance and delivery fees
- * Uses OpenStreetMap Nominatim (free, no API key) for geocoding
+ * Uses a known locations table for Kisumu-area places (instant, accurate)
+ * Falls back to OpenStreetMap Nominatim (free, no API key) for geocoding
  * Uses Haversine formula for distance calculation
  */
 
@@ -20,6 +21,78 @@ const MAX_TRUSTED_DISTANCE_KM = 100;
 // Viewbox around Kisumu (~100km radius) to bias Nominatim results
 // Format: left,top,right,bottom (lon1,lat1,lon2,lat2)
 const KISUMU_VIEWBOX = '33.8,-0.9,35.7,0.7';
+
+/**
+ * Known locations around Kisumu with approximate road distance in km.
+ * This avoids Nominatim failures for small villages/areas.
+ */
+const KNOWN_LOCATIONS: Record<string, number> = {
+  // Kisumu town areas (0-5km)
+  'kondele': 2,
+  'kibuye': 1,
+  'mamboleo': 3,
+  'nyamasaria': 5,
+  'migosi': 2,
+  'lolwe': 1,
+  'milimani': 2,
+  'nyalenda': 3,
+  'manyatta': 2,
+  'obunga': 2,
+  'bandani': 3,
+  'polyview': 4,
+  'otonglo': 3,
+  'riat': 5,
+  'tom mboya': 1,
+  'oginga odinga': 1,
+  'dunga': 4,
+  'hippo point': 5,
+  // Nearby areas (5-15km)
+  'kisian': 7,
+  'kajulu': 8,
+  'alendu': 10,
+  'rabuor': 13,
+  'kibos': 10,
+  'kopere': 12,
+  'korando': 4,
+  'chiga': 6,
+  'nyang\'ande': 8,
+  'nyahera': 6,
+  'ojolla': 5,
+  'car wash': 4,
+  'obambo': 8,
+  'dago': 7,
+  'usoma': 5,
+  'lwang\'ni': 4,
+  // Further areas (15-50km)
+  'ahero': 22,
+  'maseno': 20,
+  'kombewa': 28,
+  'muhoroni': 42,
+  'chemelil': 48,
+  'katito': 35,
+  'koru': 33,
+  'sondu': 40,
+  'awasi': 30,
+  'chemase': 25,
+  'fort ternan': 38,
+  'tamu': 15,
+  'pap onditi': 18,
+  'miwani': 30,
+  'kibigori': 35,
+  // Far areas (50km+)
+  'bondo': 58,
+  'siaya': 55,
+  'vihiga': 38,
+  'luanda': 48,
+  'kendu bay': 55,
+  'homa bay': 80,
+  'oyugis': 60,
+  'nandi hills': 50,
+  'kapsabet': 65,
+  'kakamega': 60,
+  'busia': 110,
+  'mumias': 80,
+};
 
 export interface DeliveryQuote {
   locationName: string;
@@ -195,11 +268,87 @@ function getZone(distanceKm: number): DeliveryQuote['zone'] {
 }
 
 /**
- * Get delivery quote for a location
+ * Look up a location in the known locations table.
+ * Searches for any known place name within the customer's text.
+ * Returns the longest matching name to avoid partial matches.
+ */
+export function lookupKnownLocation(text: string): { name: string; distanceKm: number } | null {
+  const lowerText = text.toLowerCase();
+
+  const matches = Object.entries(KNOWN_LOCATIONS)
+    .filter(([name]) => {
+      // Check if the known name appears as a word boundary in the text
+      const regex = new RegExp(`\\b${name.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')}\\b`, 'i');
+      return regex.test(lowerText);
+    })
+    .sort((a, b) => b[0].length - a[0].length); // longest match first
+
+  if (matches.length > 0) {
+    console.log(`[Delivery] Known location match: "${matches[0][0]}" → ${matches[0][1]}km`);
+    return { name: matches[0][0], distanceKm: matches[0][1] };
+  }
+
+  return null;
+}
+
+/**
+ * Try to parse a km distance from customer text.
+ * Matches patterns like "10km", "about 15 km", "15 kilometers", "around 20km"
+ */
+export function parseKmFromText(text: string): number | null {
+  const match = text.match(/(\d+)\s*(km|kilometers?|kilometres?|kms)/i);
+  if (match) {
+    const km = parseInt(match[1]);
+    if (km > 0 && km < 500) {
+      console.log(`[Delivery] Parsed distance from text: ${km}km`);
+      return km;
+    }
+  }
+  return null;
+}
+
+/**
+ * Create a delivery quote from a known distance (no geocoding needed)
+ */
+export function getDeliveryQuoteFromDistance(
+  distanceKm: number,
+  locationName: string
+): DeliveryQuote {
+  const zone = getZone(distanceKm);
+  const fee = calculateFee(distanceKm);
+
+  const quote: DeliveryQuote = {
+    locationName,
+    distanceKm,
+    fee,
+    zone,
+  };
+
+  if (zone === 'far') {
+    quote.minimumOrderRequired = 5000;
+  }
+
+  console.log(
+    `[Delivery] Quote from distance: "${locationName}" → ${distanceKm}km, zone=${zone}, fee=KES ${fee}`
+  );
+
+  return quote;
+}
+
+/**
+ * Get delivery quote for a location.
+ * Tries: 1) Known locations table, 2) Nominatim geocoding
  */
 export async function getDeliveryQuote(
   locationName: string
 ): Promise<DeliveryQuote | null> {
+  // 1. Try known locations table first (instant, most reliable for local places)
+  const known = lookupKnownLocation(locationName);
+  if (known) {
+    return getDeliveryQuoteFromDistance(known.distanceKm, locationName);
+  }
+
+  // 2. Try Nominatim geocoding
   const coords = await geocodeLocation(locationName);
 
   if (!coords) {

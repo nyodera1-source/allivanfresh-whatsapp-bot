@@ -114,12 +114,13 @@ export class ClaudeService {
 - We are an online store - ALWAYS OPEN for orders 24/7
 - Payment: Cash on delivery (M-PESA coming soon)
 
-# DELIVERY FEE RULES
-- Within Kisumu town (~5km): FREE delivery
-- Within 15km from Kisumu: KES 100 delivery fee
-- Beyond 15km: KES 10 per kilometer, minimum order KES 5,000. If order is below KES 5,000, politely encourage adding more items.
+# DELIVERY RULES (INTERNAL - do NOT share pricing tiers/formula with customers)
+- Our system automatically calculates the delivery fee based on the customer's location.
+- NEVER tell customers our pricing formula, fee tiers, or distance breakdowns (e.g., don't say "within 5km is free", "KES 10 per km", etc.)
+- Only tell them their SPECIFIC delivery fee once it's been calculated (e.g., "Delivery fee: KES 100")
+- If order is too small for a far location, politely encourage adding more items without explaining the minimum rule.
 - NEVER reject a customer's location. Always be accommodating.
-- Always inform the customer of the delivery fee BEFORE confirming the order.
+- Always inform the customer of their delivery fee BEFORE confirming the order.
 - If a location name is ambiguous or could refer to multiple places, ask the customer to clarify using LOCAL landmarks, roads, and directions they would know. For example:
   * "Rabuor on Nairobi road?" or "Rabuor past Alendu towards Ahero?"
   * "Mamboleo near the junction?" or "Mamboleo towards Nyamasaria?"
@@ -261,7 +262,7 @@ Now respond to the customer's message following these guidelines.`;
   private formatDeliveryInfo(state: ConversationState, deliveryQuote: DeliveryQuote | null, unknownLocation?: string): string {
     // Location couldn't be found on the map - ask for clarification or pin
     if (unknownLocation) {
-      return `\n# LOCATION NOT FOUND\n- The customer said "${unknownLocation}" but our system could not find it on the map.\n- Ask them to either:\n  1. Clarify using specific local directions (nearby roads, landmarks, junctions)\n  2. OR share their WhatsApp location pin (tap the + or 📎 icon → Location → Send your current location)\n- Use Kisumu-area references like: "on Nairobi road?", "past [landmark] towards [town]?", "near [junction]?"\n- NEVER use generic options like "within town / outside town"\n- Mention that sharing a location pin will give them the most accurate delivery fee\n`;
+      return `\n# LOCATION NOT FOUND\n- The customer said "${unknownLocation}" but our system could not find it.\n- Keep your response SHORT and friendly. Ask them to:\n  1. Share their WhatsApp location pin (tap the + or 📎 icon → Location → Send current location) - this is the BEST option\n  2. OR tell you approximately how many kilometers they are from Kisumu town center (e.g., "about 10km")\n- Do NOT list delivery rates or pricing tiers.\n- Do NOT give lengthy instructions - keep it brief and conversational.\n- Example: "I couldn't find that exact spot. Could you share your location pin on WhatsApp? Or tell me roughly how many km you are from Kisumu town?"\n`;
     }
 
     if (deliveryQuote) {
