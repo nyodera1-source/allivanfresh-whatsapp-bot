@@ -17,7 +17,27 @@ export interface WhatsAppIncomingMessage {
   };
 }
 
+// wasenderapi webhook payload format
 export interface WhatsAppWebhookPayload {
+  event?: string; // e.g., "messages.received", "messages-personal.received"
+  sessionId?: string;
+  pushName?: string; // Sender's name
+  broadcast?: boolean;
+  messageBody?: string; // The actual message text
+  remoteJid?: string; // Sender's JID (phone@lid or phone@s.whatsapp.net)
+  senderPn?: string; // Sender phone number with @s.whatsapp.net
+  cleanedSenderPn?: string; // Clean phone number without suffix
+  timestamp?: number;
+  message?: {
+    conversation?: string;
+    id?: string;
+    [key: string]: any;
+  };
+  data?: {
+    messages?: any;
+    [key: string]: any;
+  };
+  // Legacy format support
   messages?: WhatsAppIncomingMessage[];
   statuses?: any[];
 }

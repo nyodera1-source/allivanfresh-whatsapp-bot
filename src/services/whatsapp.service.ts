@@ -1,33 +1,32 @@
 import axios from 'axios';
 import { config } from '../config/env';
-import { WhatsAppOutgoingMessage, WhatsAppApiResponse } from '../models/whatsapp-message';
+import { WhatsAppApiResponse } from '../models/whatsapp-message';
 
 export class WhatsAppService {
-  private apiUrl: string;
   private apiKey: string;
-  private instanceId: string;
 
   constructor() {
-    this.apiUrl = config.WASENDER_API_URL;
     this.apiKey = config.WASENDER_API_KEY;
-    this.instanceId = config.WASENDER_INSTANCE_ID;
   }
 
   /**
    * Send a text message via wasenderapi
+   * API docs: https://wasenderapi.com/api-docs/messages/send-text-message
    */
   async sendMessage(to: string, message: string): Promise<WhatsAppApiResponse> {
     try {
-      const payload: WhatsAppOutgoingMessage = {
-        to,
-        type: 'text',
-        text: {
-          body: message,
-        },
+      // wasenderapi expects phone number in E.164 format (just digits, no @)
+      const cleanPhone = to.replace(/@.*$/, ''); // Remove @lid or @s.whatsapp.net suffix
+
+      const payload = {
+        to: cleanPhone,
+        text: message,
       };
 
+      console.log(`[WhatsApp] Sending to ${cleanPhone}:`, message.substring(0, 50));
+
       const response = await axios.post(
-        `${this.apiUrl}/instances/${this.instanceId}/messages`,
+        'https://www.wasenderapi.com/api/send-message',
         payload,
         {
           headers: {
@@ -38,7 +37,7 @@ export class WhatsAppService {
         }
       );
 
-      console.log(`[WhatsApp] Message sent to ${to}:`, message.substring(0, 50));
+      console.log(`[WhatsApp] Message sent successfully to ${cleanPhone}`);
 
       return {
         success: true,
@@ -46,6 +45,7 @@ export class WhatsAppService {
       };
     } catch (error: any) {
       console.error('[WhatsApp] Error sending message:', error.response?.data || error.message);
+      console.error('[WhatsApp] Error status:', error.response?.status);
 
       return {
         success: false,
