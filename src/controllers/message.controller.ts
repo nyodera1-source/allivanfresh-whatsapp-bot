@@ -4,7 +4,7 @@ import { ConversationService } from '../services/conversation.service';
 import { ProductService } from '../services/product.service';
 import { RecommendationService } from '../services/recommendation.service';
 import { OrderController } from './order.controller';
-import { isBusinessHoursOpen, getClosedMessage } from '../utils/business-hours';
+
 import { WhatsAppIncomingMessage } from '../models/whatsapp-message';
 import { ClaudeActionType } from '../config/constants';
 
@@ -39,12 +39,6 @@ export class MessageController {
       }
 
       console.log(`[Message] Received from ${from}: ${text}`);
-
-      // Check business hours
-      if (!isBusinessHoursOpen()) {
-        await this.whatsappService.sendMessage(from, getClosedMessage());
-        return;
-      }
 
       // Get or create customer
       const customer = await this.conversationService.getOrCreateCustomer(from);
