@@ -80,15 +80,14 @@ export class ConversationService {
     userMessage: string,
     assistantMessage: string
   ): Promise<void> {
+    const expiresAt = new Date();
+    expiresAt.setMinutes(expiresAt.getMinutes() + config.CONVERSATION_TIMEOUT_MINUTES);
+
     const conversation = await prisma.conversation.findUnique({
       where: { customerId },
     });
 
-    if (!conversation) {
-      return;
-    }
-
-    const history = conversation.messageHistory as any[];
+    const history = (conversation?.messageHistory as any[]) || [];
 
     // Add new messages
     history.push(
@@ -108,10 +107,18 @@ export class ConversationService {
     const maxHistory = config.MAX_MESSAGE_HISTORY;
     const trimmedHistory = history.slice(-maxHistory);
 
-    await prisma.conversation.update({
+    // Create or update conversation record
+    await prisma.conversation.upsert({
       where: { customerId },
-      data: {
+      update: {
         messageHistory: trimmedHistory as any,
+        expiresAt,
+      },
+      create: {
+        customerId,
+        state: getDefaultState() as any,
+        messageHistory: trimmedHistory as any,
+        expiresAt,
       },
     });
   }
