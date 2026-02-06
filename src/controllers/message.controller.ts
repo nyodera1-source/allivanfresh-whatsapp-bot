@@ -4,9 +4,10 @@ import { ConversationService } from '../services/conversation.service';
 import { ProductService } from '../services/product.service';
 import { RecommendationService } from '../services/recommendation.service';
 import { OrderController } from './order.controller';
+import { getDeliveryQuote, DeliveryQuote } from '../services/delivery.service';
 
 import { WhatsAppIncomingMessage } from '../models/whatsapp-message';
-import { ClaudeActionType } from '../config/constants';
+import { ClaudeActionType, ConversationStep } from '../config/constants';
 
 export class MessageController {
   private whatsappService: WhatsAppService;
@@ -62,13 +63,27 @@ export class MessageController {
       // Get message history
       const messageHistory = await this.conversationService.getMessageHistory(customer.id);
 
+      // If we're waiting for a delivery location, pre-calculate the distance
+      let deliveryQuote: DeliveryQuote | null = null;
+      if (state.step === ConversationStep.REQUESTING_LOCATION) {
+        deliveryQuote = await getDeliveryQuote(text);
+        if (deliveryQuote) {
+          state.deliveryDistanceKm = deliveryQuote.distanceKm;
+          state.deliveryFee = deliveryQuote.fee;
+          state.deliveryZone = deliveryQuote.zone;
+          state.deliveryLocation = text;
+          await this.conversationService.updateState(customer.id, state);
+        }
+      }
+
       // Get Claude's response
       const claudeResponse = await this.claudeService.processMessage(
         text,
         state,
         productCatalog,
         recommendations,
-        messageHistory
+        messageHistory,
+        deliveryQuote
       );
 
       // Execute actions
@@ -136,7 +151,9 @@ export class MessageController {
             break;
 
           case ClaudeActionType.REQUEST_LOCATION:
-            // Claude will handle this in conversation
+            // Set step so next message will trigger delivery calculation
+            state.step = ConversationStep.REQUESTING_LOCATION;
+            await this.conversationService.updateState(customerId, state);
             console.log(`[Action] Requesting location from ${customerId}`);
             break;
 

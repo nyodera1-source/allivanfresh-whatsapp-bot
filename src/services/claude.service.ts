@@ -2,6 +2,7 @@ import Anthropic from '@anthropic-ai/sdk';
 import { config } from '../config/env';
 import { ConversationState } from '../models/conversation-state';
 import { ClaudeActionType, ClaudeIntent } from '../config/constants';
+import { DeliveryQuote } from './delivery.service';
 
 export interface ClaudeAction {
   type: ClaudeActionType;
@@ -35,10 +36,11 @@ export class ClaudeService {
     state: ConversationState,
     productCatalog: string,
     recommendations: string = '',
-    messageHistory: Array<{ role: string; content: string }> = []
+    messageHistory: Array<{ role: string; content: string }> = [],
+    deliveryQuote: DeliveryQuote | null = null
   ): Promise<ClaudeResponse> {
     try {
-      const systemPrompt = this.buildSystemPrompt(state, productCatalog, recommendations);
+      const systemPrompt = this.buildSystemPrompt(state, productCatalog, recommendations, deliveryQuote);
 
       // Build message history
       const messages: Array<{ role: 'user' | 'assistant'; content: string }> = [];
@@ -95,9 +97,11 @@ export class ClaudeService {
   private buildSystemPrompt(
     state: ConversationState,
     productCatalog: string,
-    recommendations: string
+    recommendations: string,
+    deliveryQuote: DeliveryQuote | null = null
   ): string {
     const cartSummary = this.formatCartSummary(state.cart);
+    const deliveryInfo = this.formatDeliveryInfo(state, deliveryQuote);
 
     return `You are an AI assistant for AllivanFresh, a fresh food delivery service based in Kisumu, specializing in fish, chicken, and vegetables.
 
@@ -108,13 +112,13 @@ export class ClaudeService {
 - We are an online store - ALWAYS OPEN for orders 24/7
 - Payment: Cash on delivery (M-PESA coming soon)
 
-# DELIVERY FEE RULES (VERY IMPORTANT - follow these exactly)
-- Within Kisumu town (e.g., Milimani, Kondele, Nyalenda, Mamboleo, Kibuye, Town Center, etc.): FREE delivery
-- Within approximately 15km from Kisumu town (e.g., Ahero, Maseno, Katito, Rabuor, etc.): KES 100 delivery fee
-- Beyond 15km from Kisumu town: ONLY accept if the order total is KES 5,000 or above. Charge KES 10 per kilometer delivery fee. If the order is below KES 5,000, politely explain the minimum order requirement for that distance and encourage them to add more items.
-- NEVER reject a customer's location outright. Always be accommodating.
-- Use your knowledge of Kisumu geography to estimate which zone a location falls in.
+# DELIVERY FEE RULES
+- Within Kisumu town (~5km): FREE delivery
+- Within 15km from Kisumu: KES 100 delivery fee
+- Beyond 15km: KES 10 per kilometer, minimum order KES 5,000. If order is below KES 5,000, politely encourage adding more items.
+- NEVER reject a customer's location. Always be accommodating.
 - Always inform the customer of the delivery fee BEFORE confirming the order.
+${deliveryInfo}
 
 # YOUR ROLE
 - Help customers browse products naturally in English, Swahili, or mixed languages
@@ -186,13 +190,21 @@ Response:
 User: "Checkout"
 Response:
 {
-  "message": "Perfect! Where in Kisumu should we deliver?",
+  "message": "Perfect! Where should we deliver your order?",
   "actions": [
     {
       "type": "request_location",
       "data": {}
     }
   ],
+  "intent": "checkout"
+}
+
+User provides delivery location (system has calculated: 25km, KES 250 fee, zone=far, order total KES 6,000):
+Response:
+{
+  "message": "📍 Delivery to [location] (25km from Kisumu)\\n\\n🚚 Delivery fee: KES 250\\n\\nOrder summary:\\n- [items]\\n- Subtotal: KES 6,000\\n- Delivery: KES 250\\n- Total: KES 6,250\\n\\nShall I confirm this order?",
+  "actions": [],
   "intent": "checkout"
 }
 
@@ -236,6 +248,35 @@ Now respond to the customer's message following these guidelines.`;
   /**
    * Format cart summary for system prompt
    */
+  /**
+   * Format delivery info for system prompt
+   */
+  private formatDeliveryInfo(state: ConversationState, deliveryQuote: DeliveryQuote | null): string {
+    if (deliveryQuote) {
+      const cartTotal = state.cart.reduce((sum, item) => sum + item.totalPrice, 0);
+      let info = `\n# DELIVERY CALCULATION (from our system - use these EXACT numbers)\n`;
+      info += `- Customer location: ${deliveryQuote.locationName}\n`;
+      info += `- Distance from Kisumu: ${deliveryQuote.distanceKm} km\n`;
+      info += `- Delivery zone: ${deliveryQuote.zone}\n`;
+      info += `- Delivery fee: KES ${deliveryQuote.fee}\n`;
+
+      if (deliveryQuote.zone === 'far' && cartTotal < 5000) {
+        info += `- ⚠️ Order total (KES ${cartTotal}) is below minimum KES 5,000 for this distance. Politely ask customer to add more items or choose a closer location.\n`;
+      } else if (deliveryQuote.zone === 'far') {
+        info += `- ✅ Order total (KES ${cartTotal}) meets the minimum for this distance.\n`;
+      }
+
+      info += `- IMPORTANT: Use the delivery fee above in the order summary. Do NOT guess or calculate your own fee.\n`;
+      return info;
+    }
+
+    if (state.deliveryFee !== undefined && state.deliveryLocation) {
+      return `\n# DELIVERY INFO (already calculated)\n- Location: ${state.deliveryLocation}\n- Distance: ${state.deliveryDistanceKm} km\n- Fee: KES ${state.deliveryFee}\n`;
+    }
+
+    return '';
+  }
+
   private formatCartSummary(cart: any[]): string {
     if (cart.length === 0) {
       return '# CURRENT CART\nEmpty - customer has not added any items yet';

@@ -22,6 +22,9 @@ export interface ConversationState {
   cart: CartItem[];
   deliveryLocation?: string;
   deliveryNotes?: string;
+  deliveryDistanceKm?: number;
+  deliveryFee?: number;
+  deliveryZone?: 'town' | 'nearby' | 'far';
   lastProductViewed?: string;
   language: 'en' | 'sw' | 'mixed';
   pendingAction?: {
