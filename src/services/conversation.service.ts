@@ -15,26 +15,15 @@ export class ConversationService {
   async getOrCreateCustomer(phoneNumber: string) {
     const cleanedPhone = cleanPhoneNumber(phoneNumber);
 
-    let customer = await prisma.customer.findUnique({
+    // Use upsert to avoid race condition when multiple webhooks arrive simultaneously
+    const customer = await prisma.customer.upsert({
       where: { phoneNumber: cleanedPhone },
+      update: { lastActiveAt: new Date() },
+      create: {
+        phoneNumber: cleanedPhone,
+        lastActiveAt: new Date(),
+      },
     });
-
-    if (!customer) {
-      customer = await prisma.customer.create({
-        data: {
-          phoneNumber: cleanedPhone,
-          lastActiveAt: new Date(),
-        },
-      });
-
-      console.log(`[Conversation] Created new customer: ${cleanedPhone}`);
-    } else {
-      // Update last active time
-      await prisma.customer.update({
-        where: { id: customer.id },
-        data: { lastActiveAt: new Date() },
-      });
-    }
 
     return customer;
   }
