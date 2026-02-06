@@ -144,6 +144,11 @@ ${deliveryInfo}
 - Suggest complementary products (e.g., vegetables with fish, potatoes with chicken)
 - Confirm quantities clearly to avoid confusion
 - Use emojis sparingly for visual appeal (🐟 for fish, 🍗 for chicken, 🥬 for vegetables)
+- ALWAYS clarify product variants BEFORE adding to cart or quoting a price:
+  * For chicken: ask if they want broiler or kienyeji (free-range) - prices differ significantly
+  * For fish: ask if they want whole fish or fillet if not specified
+  * For items with multiple sizes/weights: confirm the size they want
+  * Do NOT assume a default variant - always ask the customer first
 
 ${cartSummary}
 
@@ -234,19 +239,79 @@ Now respond to the customer's message following these guidelines.`;
         jsonText = jsonText.replace(/```\n?/, '').replace(/```\n?$/, '');
       }
 
-      const parsed = JSON.parse(jsonText);
+      // Try direct parse first
+      try {
+        const parsed = JSON.parse(jsonText);
+        return {
+          message: parsed.message || 'I can help you order fresh food from AllivanFresh!',
+          actions: parsed.actions || [],
+          intent: parsed.intent || ClaudeIntent.INQUIRY,
+        };
+      } catch {
+        // Direct parse failed - try extracting JSON from within the text
+      }
 
-      return {
-        message: parsed.message || 'I can help you order fresh food from AllivanFresh!',
-        actions: parsed.actions || [],
-        intent: parsed.intent || ClaudeIntent.INQUIRY,
-      };
-    } catch (error) {
+      // Try to find JSON object anywhere in the response
+      const jsonMatch = responseText.match(/\{[\s\S]*"message"\s*:\s*"[\s\S]*?\}(?:\s*\]?\s*\})?/);
+      if (jsonMatch) {
+        // Find the complete JSON by balancing braces
+        const startIdx = responseText.indexOf('{');
+        if (startIdx !== -1) {
+          let depth = 0;
+          let endIdx = -1;
+          for (let i = startIdx; i < responseText.length; i++) {
+            if (responseText[i] === '{') depth++;
+            else if (responseText[i] === '}') {
+              depth--;
+              if (depth === 0) {
+                endIdx = i;
+                break;
+              }
+            }
+          }
+          if (endIdx !== -1) {
+            const extracted = responseText.substring(startIdx, endIdx + 1);
+            try {
+              const parsed = JSON.parse(extracted);
+              return {
+                message: parsed.message || 'I can help you order fresh food from AllivanFresh!',
+                actions: parsed.actions || [],
+                intent: parsed.intent || ClaudeIntent.INQUIRY,
+              };
+            } catch {
+              // Extracted JSON still invalid
+            }
+          }
+        }
+      }
+
       console.error('[Claude] Failed to parse JSON response:', responseText);
 
-      // Try to extract just the message if JSON parsing fails
+      // Final fallback: strip any JSON-like content to avoid leaking raw JSON to customer
+      let cleanMessage = responseText;
+      // Remove any JSON blocks (```json...``` or raw {...})
+      cleanMessage = cleanMessage.replace(/```json[\s\S]*?```/g, '');
+      cleanMessage = cleanMessage.replace(/```[\s\S]*?```/g, '');
+      cleanMessage = cleanMessage.replace(/\{[\s\S]*"message"[\s\S]*\}/g, '');
+      cleanMessage = cleanMessage.trim();
+
+      if (cleanMessage.length > 10) {
+        return {
+          message: cleanMessage.substring(0, 500),
+          actions: [],
+          intent: ClaudeIntent.INQUIRY,
+        };
+      }
+
       return {
-        message: responseText.substring(0, 500),
+        message: 'Samahani, let me try that again. How can I help you today?',
+        actions: [],
+        intent: ClaudeIntent.INQUIRY,
+      };
+    } catch (error) {
+      console.error('[Claude] Error in parseResponse:', error);
+      return {
+        message: 'Samahani, let me try that again. How can I help you today?',
         actions: [],
         intent: ClaudeIntent.INQUIRY,
       };
