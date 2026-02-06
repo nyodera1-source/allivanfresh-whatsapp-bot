@@ -91,6 +91,8 @@ export class MessageController {
           state.deliveryFee = deliveryQuote.fee;
           state.deliveryZone = deliveryQuote.zone;
           state.deliveryLocation = text;
+          // Move past REQUESTING_LOCATION so next messages aren't treated as locations
+          state.step = ConversationStep.CONFIRMING_ORDER;
           await this.conversationService.updateState(customer.id, state);
         } else {
           // All lookups failed - Claude should ask for clarification or location pin
@@ -156,11 +158,12 @@ export class MessageController {
       locationLabel
     );
 
-    // Update state with delivery info
+    // Update state with delivery info and move past location step
     state.deliveryDistanceKm = deliveryQuote.distanceKm;
     state.deliveryFee = deliveryQuote.fee;
     state.deliveryZone = deliveryQuote.zone;
     state.deliveryLocation = locationLabel;
+    state.step = ConversationStep.CONFIRMING_ORDER;
     await this.conversationService.updateState(customer.id, state);
 
     // Get products and history for Claude
