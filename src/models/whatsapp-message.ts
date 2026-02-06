@@ -33,6 +33,17 @@ export interface WhatsAppWebhookPayload {
     id?: string;
     [key: string]: any;
   };
+  // Nested key object (wasenderapi sometimes nests fields here)
+  key?: {
+    event?: string;
+    id?: string;
+    fromMe?: boolean;
+    remoteJid?: string;
+    senderPn?: string;
+    cleanedSenderPn?: string;
+    messageBody?: string;
+    [key: string]: any;
+  };
   data?: {
     messages?: any;
     [key: string]: any;

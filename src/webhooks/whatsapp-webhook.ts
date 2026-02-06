@@ -57,29 +57,38 @@ router.post('/', async (req: Request, res: Response) => {
     console.log('[Webhook] Received payload:', JSON.stringify(payload, null, 2));
 
     // Check if this is a wasenderapi format payload
-    if (payload.event && payload.messageBody && payload.remoteJid) {
+    // Fields can be at top level OR nested inside "key" object
+    const event = payload.event || payload.key?.event;
+    const messageBody = payload.messageBody || payload.message?.conversation || payload.key?.messageBody;
+    const remoteJid = payload.remoteJid || payload.key?.remoteJid;
+    const cleanedSenderPn = payload.cleanedSenderPn || payload.key?.cleanedSenderPn;
+    const senderPn = payload.senderPn || payload.key?.senderPn;
+
+    console.log('[Webhook] Extracted fields - event:', event, 'messageBody:', messageBody, 'remoteJid:', remoteJid);
+
+    if (event && messageBody) {
       console.log('[Webhook] Processing wasenderapi message format');
 
       // Extract phone number from remoteJid or cleanedSenderPn
       // remoteJid format: "220804788830226@lid" or "254725923814@s.whatsapp.net"
       // cleanedSenderPn format: "254725923814"
-      let phoneNumber = payload.cleanedSenderPn || '';
-      if (!phoneNumber && payload.remoteJid) {
-        phoneNumber = payload.remoteJid.split('@')[0];
+      let phoneNumber = cleanedSenderPn || '';
+      if (!phoneNumber && remoteJid) {
+        phoneNumber = remoteJid.split('@')[0];
       }
-      if (!phoneNumber && payload.senderPn) {
-        phoneNumber = payload.senderPn.split('@')[0];
+      if (!phoneNumber && senderPn) {
+        phoneNumber = senderPn.split('@')[0];
       }
 
       // Convert to our message format
       const message: WhatsAppIncomingMessage = {
-        id: payload.message?.id || payload.data?.messages?.key?.id || Date.now().toString(),
+        id: payload.message?.id || payload.key?.id || payload.data?.messages?.key?.id || Date.now().toString(),
         from: phoneNumber,
         to: '', // Not provided in wasenderapi webhook
         timestamp: payload.timestamp?.toString() || Date.now().toString(),
         type: 'text',
         text: {
-          body: payload.messageBody || payload.message?.conversation || '',
+          body: messageBody,
         },
       };
 
