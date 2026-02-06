@@ -65,6 +65,7 @@ export class MessageController {
 
       // If we're waiting for a delivery location, pre-calculate the distance
       let deliveryQuote: DeliveryQuote | null = null;
+      let locationNotFound = false;
       if (state.step === ConversationStep.REQUESTING_LOCATION) {
         deliveryQuote = await getDeliveryQuote(text);
         if (deliveryQuote) {
@@ -73,6 +74,9 @@ export class MessageController {
           state.deliveryZone = deliveryQuote.zone;
           state.deliveryLocation = text;
           await this.conversationService.updateState(customer.id, state);
+        } else {
+          // Geocoding failed - Claude should ask for clarification
+          locationNotFound = true;
         }
       }
 
@@ -83,7 +87,8 @@ export class MessageController {
         productCatalog,
         recommendations,
         messageHistory,
-        deliveryQuote
+        deliveryQuote,
+        locationNotFound ? text : undefined
       );
 
       // Execute actions

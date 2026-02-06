@@ -37,10 +37,11 @@ export class ClaudeService {
     productCatalog: string,
     recommendations: string = '',
     messageHistory: Array<{ role: string; content: string }> = [],
-    deliveryQuote: DeliveryQuote | null = null
+    deliveryQuote: DeliveryQuote | null = null,
+    unknownLocation?: string
   ): Promise<ClaudeResponse> {
     try {
-      const systemPrompt = this.buildSystemPrompt(state, productCatalog, recommendations, deliveryQuote);
+      const systemPrompt = this.buildSystemPrompt(state, productCatalog, recommendations, deliveryQuote, unknownLocation);
 
       // Build message history
       const messages: Array<{ role: 'user' | 'assistant'; content: string }> = [];
@@ -98,10 +99,11 @@ export class ClaudeService {
     state: ConversationState,
     productCatalog: string,
     recommendations: string,
-    deliveryQuote: DeliveryQuote | null = null
+    deliveryQuote: DeliveryQuote | null = null,
+    unknownLocation?: string
   ): string {
     const cartSummary = this.formatCartSummary(state.cart);
-    const deliveryInfo = this.formatDeliveryInfo(state, deliveryQuote);
+    const deliveryInfo = this.formatDeliveryInfo(state, deliveryQuote, unknownLocation);
 
     return `You are an AI assistant for AllivanFresh, a fresh food delivery service based in Kisumu, specializing in fish, chicken, and vegetables.
 
@@ -118,6 +120,11 @@ export class ClaudeService {
 - Beyond 15km: KES 10 per kilometer, minimum order KES 5,000. If order is below KES 5,000, politely encourage adding more items.
 - NEVER reject a customer's location. Always be accommodating.
 - Always inform the customer of the delivery fee BEFORE confirming the order.
+- If a location name is ambiguous or could refer to multiple places, ask the customer to clarify using LOCAL landmarks, roads, and directions they would know. For example:
+  * "Rabuor on Nairobi road?" or "Rabuor past Alendu towards Ahero?"
+  * "Mamboleo near the junction?" or "Mamboleo towards Nyamasaria?"
+  * Use nearby towns, major roads (Nairobi road, Busia road, Kakamega road), or well-known landmarks
+  * NEVER use generic options like "within town" or "outside town" - always reference specific local directions
 ${deliveryInfo}
 
 # YOUR ROLE
@@ -251,7 +258,12 @@ Now respond to the customer's message following these guidelines.`;
   /**
    * Format delivery info for system prompt
    */
-  private formatDeliveryInfo(state: ConversationState, deliveryQuote: DeliveryQuote | null): string {
+  private formatDeliveryInfo(state: ConversationState, deliveryQuote: DeliveryQuote | null, unknownLocation?: string): string {
+    // Location couldn't be found on the map - ask for clarification
+    if (unknownLocation) {
+      return `\n# LOCATION NOT FOUND\n- The customer said "${unknownLocation}" but our system could not find it on the map.\n- Ask them to clarify using specific local directions, nearby landmarks, or roads.\n- Use Kisumu-area references like: "on Nairobi road?", "past [landmark] towards [town]?", "near [junction]?"\n- NEVER use generic options like "within town / outside town"\n`;
+    }
+
     if (deliveryQuote) {
       const cartTotal = state.cart.reduce((sum, item) => sum + item.totalPrice, 0);
       let info = `\n# DELIVERY CALCULATION (from our system - use these EXACT numbers)\n`;
