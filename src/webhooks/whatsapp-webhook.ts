@@ -6,6 +6,25 @@ import { config } from '../config/env';
 const router = Router();
 const messageController = new MessageController();
 
+// Simple in-memory deduplication to prevent processing the same message twice
+const processedMessages = new Map<string, number>();
+const DEDUP_TTL_MS = 60_000; // Keep message IDs for 60 seconds
+
+function isDuplicate(messageId: string): boolean {
+  const now = Date.now();
+  // Clean up old entries
+  for (const [id, timestamp] of processedMessages) {
+    if (now - timestamp > DEDUP_TTL_MS) {
+      processedMessages.delete(id);
+    }
+  }
+  if (processedMessages.has(messageId)) {
+    return true;
+  }
+  processedMessages.set(messageId, now);
+  return false;
+}
+
 /**
  * Webhook verification (GET)
  * wasenderapi sends a GET request to verify the webhook
@@ -92,9 +111,18 @@ router.post('/', async (req: Request, res: Response) => {
         phoneNumber = senderPn.split('@')[0];
       }
 
+      // Build a unique message ID for deduplication
+      const messageId = payload.message?.id || payload.key?.id || payload.data?.messages?.key?.id || '';
+      const dedupKey = messageId || `${phoneNumber}:${messageBody}:${Math.floor(Date.now() / 5000)}`;
+
+      if (isDuplicate(dedupKey)) {
+        console.log('[Webhook] Skipping duplicate message:', dedupKey);
+        return;
+      }
+
       // Convert to our message format
       const message: WhatsAppIncomingMessage = {
-        id: payload.message?.id || payload.key?.id || payload.data?.messages?.key?.id || Date.now().toString(),
+        id: messageId || Date.now().toString(),
         from: phoneNumber,
         to: '', // Not provided in wasenderapi webhook
         timestamp: payload.timestamp?.toString() || Date.now().toString(),
