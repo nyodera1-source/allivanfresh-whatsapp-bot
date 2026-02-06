@@ -5,6 +5,7 @@
     "buildCommand": "npm install && npm run build"
   },
   "deploy": {
+    "releaseCommand": "npx prisma db push --skip-generate",
     "startCommand": "npm start",
     "healthcheckPath": "/health",
     "healthcheckTimeout": 100,
