@@ -22,6 +22,7 @@ export enum ClaudeActionType {
   CONFIRM_ORDER = 'confirm_order',
   VIEW_CART = 'view_cart',
   CLEAR_CART = 'clear_cart',
+  SHOW_PRODUCTS = 'show_products',
 }
 
 // Claude intent types

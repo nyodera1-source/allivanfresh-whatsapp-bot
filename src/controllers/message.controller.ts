@@ -111,8 +111,15 @@ export class MessageController {
         locationNotFound ? text : undefined
       );
 
-      // Execute actions
-      await this.executeActions(customer.id, claudeResponse.actions, state);
+      // Execute actions (and collect product images to send)
+      const productImagesToSend = await this.executeActions(customer.id, claudeResponse.actions, state);
+
+      // Send product images before the text response
+      if (productImagesToSend && productImagesToSend.length > 0) {
+        for (const img of productImagesToSend) {
+          await this.whatsappService.sendImage(from, img.imageUrl, img.caption);
+        }
+      }
 
       // Send response
       await this.whatsappService.sendMessageWithRetry(from, claudeResponse.message);
@@ -188,19 +195,26 @@ export class MessageController {
     );
 
     // Execute actions and send response
-    await this.executeActions(customer.id, claudeResponse.actions, state);
+    const locationImages = await this.executeActions(customer.id, claudeResponse.actions, state);
+    if (locationImages && locationImages.length > 0) {
+      for (const img of locationImages) {
+        await this.whatsappService.sendImage(from, img.imageUrl, img.caption);
+      }
+    }
     await this.whatsappService.sendMessageWithRetry(from, claudeResponse.message);
     await this.conversationService.addMessageToHistory(customer.id, userMessage, claudeResponse.message);
   }
 
   /**
-   * Execute Claude's actions
+   * Execute Claude's actions. Returns product images to send (if any).
    */
   private async executeActions(
     customerId: string,
     actions: any[],
     state: any
-  ): Promise<void> {
+  ): Promise<{ imageUrl: string; caption: string }[]> {
+    const imagesToSend: { imageUrl: string; caption: string }[] = [];
+
     for (const action of actions) {
       try {
         switch (action.type) {
@@ -241,6 +255,22 @@ export class MessageController {
             console.log(`[Action] Order confirmed for ${customerId}`);
             break;
 
+          case ClaudeActionType.SHOW_PRODUCTS:
+            // Send product images to customer
+            if (action.data.productIds && Array.isArray(action.data.productIds)) {
+              for (const productId of action.data.productIds.slice(0, 5)) { // max 5 images at once
+                const product = await this.productService.getProductById(productId);
+                if (product && product.imageUrl) {
+                  imagesToSend.push({
+                    imageUrl: product.imageUrl,
+                    caption: `${product.name} — KES ${product.basePrice} ${product.unit}`,
+                  });
+                }
+              }
+              console.log(`[Action] Showing ${imagesToSend.length} product images`);
+            }
+            break;
+
           default:
             console.log(`[Action] Unknown action type: ${action.type}`);
         }
@@ -248,5 +278,7 @@ export class MessageController {
         console.error(`[Action] Error executing action ${action.type}:`, error.message);
       }
     }
+
+    return imagesToSend;
   }
 }

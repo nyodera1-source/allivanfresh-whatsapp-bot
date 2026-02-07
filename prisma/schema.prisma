@@ -50,9 +50,10 @@ model Product {
   basePrice           Decimal             @db.Decimal(10, 2)
   unit                String              // "per kg", "per piece", "per bundle"
 
-  // Availability
+  // Availability & Stock
   availability        AvailabilityStatus  @default(IN_STOCK)
   availabilityNotes   String?             // "Call for large orders"
+  stockQuantity       Int?                // null = unlimited/not tracked, 0 = out of stock
 
   // Metadata
   imageUrl            String?

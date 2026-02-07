@@ -38,6 +38,13 @@ const envSchema = z.object({
   // Session Management
   CONVERSATION_TIMEOUT_MINUTES: z.string().transform(Number).default('30'),
   MAX_MESSAGE_HISTORY: z.string().transform(Number).default('10'),
+
+  // Admin Panel
+  ADMIN_PASSWORD: z.string().min(1).default('admin123'),
+
+  // Cloudinary (for product images)
+  CLOUDINARY_CLOUD_NAME: z.string().optional(),
+  CLOUDINARY_UPLOAD_PRESET: z.string().optional(),
 });
 
 // Validate environment variables

@@ -2,6 +2,7 @@ import { OrderService } from '../services/order.service';
 import { EmailService } from '../services/email.service';
 import { ConversationService } from '../services/conversation.service';
 import { RecommendationService } from '../services/recommendation.service';
+import { ProductService } from '../services/product.service';
 import { ConversationState } from '../models/conversation-state';
 import { OrderStatus } from '@prisma/client';
 
@@ -10,12 +11,14 @@ export class OrderController {
   private emailService: EmailService;
   private conversationService: ConversationService;
   private recommendationService: RecommendationService;
+  private productService: ProductService;
 
   constructor() {
     this.orderService = new OrderService();
     this.emailService = new EmailService();
     this.conversationService = new ConversationService();
     this.recommendationService = new RecommendationService();
+    this.productService = new ProductService();
   }
 
   /**
@@ -48,6 +51,11 @@ export class OrderController {
         console.log(`[Order] Email sent for order ${order.orderNumber}`);
       } else {
         console.error(`[Order] Failed to send email for order ${order.orderNumber}`);
+      }
+
+      // Decrement stock for each ordered item
+      for (const item of order.items) {
+        await this.productService.decrementStock(item.productId, Number(item.quantity));
       }
 
       // Update recommendations based on this order

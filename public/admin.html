@@ -1,0 +1,389 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AllivanFresh Admin</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: #f5f5f5; color: #333; }
+    .header { background: #2d6a4f; color: white; padding: 16px 24px; display: flex; justify-content: space-between; align-items: center; }
+    .header h1 { font-size: 20px; }
+    .header button { background: rgba(255,255,255,0.2); color: white; border: none; padding: 8px 16px; border-radius: 6px; cursor: pointer; }
+    .header button:hover { background: rgba(255,255,255,0.3); }
+    .container { max-width: 1200px; margin: 0 auto; padding: 20px; }
+
+    /* Login */
+    .login-box { max-width: 400px; margin: 100px auto; background: white; padding: 40px; border-radius: 12px; box-shadow: 0 2px 12px rgba(0,0,0,0.1); text-align: center; }
+    .login-box h2 { margin-bottom: 24px; color: #2d6a4f; }
+    .login-box input { width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; font-size: 16px; margin-bottom: 16px; }
+    .login-box .btn { width: 100%; padding: 12px; background: #2d6a4f; color: white; border: none; border-radius: 8px; font-size: 16px; cursor: pointer; }
+    .login-box .btn:hover { background: #1b4332; }
+    .error { color: #d32f2f; font-size: 14px; margin-bottom: 12px; }
+
+    /* Stats */
+    .stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin-bottom: 24px; }
+    .stat-card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+    .stat-card .label { font-size: 13px; color: #666; text-transform: uppercase; }
+    .stat-card .value { font-size: 28px; font-weight: 700; margin-top: 4px; }
+    .stat-card.warning .value { color: #e65100; }
+    .stat-card.danger .value { color: #d32f2f; }
+
+    /* Category Tabs */
+    .tabs { display: flex; gap: 8px; margin-bottom: 20px; flex-wrap: wrap; }
+    .tab { padding: 8px 18px; border-radius: 20px; border: 1px solid #ddd; background: white; cursor: pointer; font-size: 14px; }
+    .tab.active { background: #2d6a4f; color: white; border-color: #2d6a4f; }
+
+    /* Product Table */
+    .product-table { width: 100%; border-collapse: separate; border-spacing: 0; background: white; border-radius: 10px; overflow: hidden; box-shadow: 0 1px 4px rgba(0,0,0,0.08); }
+    .product-table th { background: #f9f9f9; padding: 12px 16px; text-align: left; font-size: 13px; color: #666; border-bottom: 2px solid #eee; }
+    .product-table td { padding: 12px 16px; border-bottom: 1px solid #f0f0f0; vertical-align: middle; }
+    .product-table tr:hover td { background: #fafffe; }
+    .product-table img { width: 50px; height: 50px; object-fit: cover; border-radius: 6px; background: #eee; }
+    .no-img { width: 50px; height: 50px; border-radius: 6px; background: #eee; display: flex; align-items: center; justify-content: center; font-size: 10px; color: #999; }
+
+    /* Editable fields */
+    .editable { cursor: pointer; padding: 4px 8px; border-radius: 4px; border: 1px solid transparent; min-width: 60px; display: inline-block; }
+    .editable:hover { border-color: #2d6a4f; background: #f0faf4; }
+    .editable input, .editable select { padding: 4px 8px; border: 1px solid #2d6a4f; border-radius: 4px; font-size: 14px; width: 80px; }
+    .editable select { width: auto; }
+
+    /* Status badges */
+    .badge { padding: 4px 10px; border-radius: 12px; font-size: 12px; font-weight: 600; }
+    .badge.in-stock { background: #e8f5e9; color: #2e7d32; }
+    .badge.low-stock { background: #fff3e0; color: #e65100; }
+    .badge.out-of-stock { background: #ffebee; color: #c62828; }
+    .badge.on-request { background: #e3f2fd; color: #1565c0; }
+
+    /* Buttons */
+    .btn-sm { padding: 6px 12px; border: none; border-radius: 6px; font-size: 12px; cursor: pointer; }
+    .btn-upload { background: #e3f2fd; color: #1565c0; }
+    .btn-upload:hover { background: #bbdefb; }
+    .btn-save { background: #2d6a4f; color: white; }
+    .btn-save:hover { background: #1b4332; }
+    .btn-remove { background: #ffebee; color: #c62828; }
+    .btn-remove:hover { background: #ffcdd2; }
+
+    .saving { opacity: 0.5; pointer-events: none; }
+    .toast { position: fixed; bottom: 20px; right: 20px; background: #2d6a4f; color: white; padding: 12px 24px; border-radius: 8px; font-size: 14px; display: none; z-index: 1000; }
+    .toast.error { background: #c62828; }
+    .toast.show { display: block; }
+  </style>
+</head>
+<body>
+
+<!-- Login Screen -->
+<div id="loginScreen">
+  <div class="login-box">
+    <h2>AllivanFresh Admin</h2>
+    <div id="loginError" class="error" style="display:none"></div>
+    <input type="password" id="passwordInput" placeholder="Enter admin password" onkeydown="if(event.key==='Enter')login()">
+    <button class="btn" onclick="login()">Login</button>
+  </div>
+</div>
+
+<!-- Dashboard -->
+<div id="dashboard" style="display:none">
+  <div class="header">
+    <h1>AllivanFresh Admin</h1>
+    <button onclick="logout()">Logout</button>
+  </div>
+  <div class="container">
+    <!-- Stats -->
+    <div class="stats">
+      <div class="stat-card">
+        <div class="label">Total Products</div>
+        <div class="value" id="totalProducts">-</div>
+      </div>
+      <div class="stat-card warning">
+        <div class="label">Low Stock (&lt;5)</div>
+        <div class="value" id="lowStock">-</div>
+      </div>
+      <div class="stat-card danger">
+        <div class="label">Out of Stock</div>
+        <div class="value" id="outOfStock">-</div>
+      </div>
+      <div class="stat-card">
+        <div class="label">With Images</div>
+        <div class="value" id="withImages">-</div>
+      </div>
+    </div>
+
+    <!-- Category Tabs -->
+    <div class="tabs" id="categoryTabs"></div>
+
+    <!-- Product Table -->
+    <table class="product-table">
+      <thead>
+        <tr>
+          <th>Image</th>
+          <th>Product</th>
+          <th>Price (KES)</th>
+          <th>Stock</th>
+          <th>Status</th>
+          <th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="productList"></tbody>
+    </table>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  let products = [];
+  let token = sessionStorage.getItem('adminToken') || '';
+  let cloudinaryConfig = {};
+  let activeCategory = 'ALL';
+
+  // Auto-login if token exists
+  if (token) { initDashboard(); }
+
+  async function login() {
+    const pw = document.getElementById('passwordInput').value;
+    if (!pw) return;
+    token = pw;
+    try {
+      const res = await apiFetch('/admin/api/products');
+      if (!res.ok) throw new Error('Invalid password');
+      sessionStorage.setItem('adminToken', token);
+      initDashboard();
+    } catch (e) {
+      document.getElementById('loginError').textContent = 'Invalid password';
+      document.getElementById('loginError').style.display = 'block';
+      token = '';
+    }
+  }
+
+  function logout() {
+    sessionStorage.removeItem('adminToken');
+    token = '';
+    document.getElementById('dashboard').style.display = 'none';
+    document.getElementById('loginScreen').style.display = 'block';
+    document.getElementById('passwordInput').value = '';
+  }
+
+  async function initDashboard() {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('dashboard').style.display = 'block';
+    await loadConfig();
+    await loadProducts();
+  }
+
+  async function loadConfig() {
+    try {
+      const res = await apiFetch('/admin/api/config');
+      if (res.ok) cloudinaryConfig = await res.json();
+    } catch (e) { console.log('Could not load Cloudinary config'); }
+  }
+
+  async function loadProducts() {
+    try {
+      const res = await apiFetch('/admin/api/products');
+      products = await res.json();
+      updateStats();
+      renderTabs();
+      renderProducts();
+    } catch (e) {
+      showToast('Failed to load products', true);
+    }
+  }
+
+  function updateStats() {
+    document.getElementById('totalProducts').textContent = products.length;
+    document.getElementById('lowStock').textContent = products.filter(p => p.stockQuantity !== null && p.stockQuantity > 0 && p.stockQuantity < 5).length;
+    document.getElementById('outOfStock').textContent = products.filter(p => p.availability === 'OUT_OF_STOCK' || (p.stockQuantity !== null && p.stockQuantity <= 0)).length;
+    document.getElementById('withImages').textContent = products.filter(p => p.imageUrl).length;
+  }
+
+  function renderTabs() {
+    const categories = ['ALL', ...new Set(products.map(p => p.category))];
+    const tabsEl = document.getElementById('categoryTabs');
+    tabsEl.innerHTML = categories.map(c =>
+      `<div class="tab ${c === activeCategory ? 'active' : ''}" onclick="filterCategory('${c}')">${c === 'ALL' ? 'All' : c.replace('_', ' ')}</div>`
+    ).join('');
+  }
+
+  function filterCategory(cat) {
+    activeCategory = cat;
+    renderTabs();
+    renderProducts();
+  }
+
+  function renderProducts() {
+    const filtered = activeCategory === 'ALL' ? products : products.filter(p => p.category === activeCategory);
+    const tbody = document.getElementById('productList');
+    tbody.innerHTML = filtered.map(p => {
+      const stockBadge = getStockBadge(p);
+      const stockVal = p.stockQuantity === null ? 'Unlimited' : p.stockQuantity;
+      return `<tr id="row-${p.id}">
+        <td>${p.imageUrl
+          ? `<img src="${p.imageUrl}" alt="${p.name}" onclick="viewImage('${p.imageUrl}')">`
+          : `<div class="no-img">No image</div>`}
+        </td>
+        <td>
+          <strong>${p.name}</strong><br>
+          <small style="color:#666">${p.description.substring(0, 60)}</small>
+        </td>
+        <td>
+          <span class="editable" onclick="editField(this, '${p.id}', 'basePrice', ${Number(p.basePrice)})">${Number(p.basePrice)}</span>
+          <small style="color:#888">${p.unit}</small>
+        </td>
+        <td>
+          <span class="editable" onclick="editField(this, '${p.id}', 'stockQuantity', ${p.stockQuantity === null ? "'null'" : p.stockQuantity})">${stockVal}</span>
+        </td>
+        <td>${stockBadge}</td>
+        <td>
+          <button class="btn-sm btn-upload" onclick="uploadImage('${p.id}')">Upload Image</button>
+          ${p.imageUrl ? `<button class="btn-sm btn-remove" onclick="removeImage('${p.id}')">Remove</button>` : ''}
+        </td>
+      </tr>`;
+    }).join('');
+  }
+
+  function getStockBadge(p) {
+    if (p.availability === 'OUT_OF_STOCK' || (p.stockQuantity !== null && p.stockQuantity <= 0)) {
+      return '<span class="badge out-of-stock">Out of Stock</span>';
+    }
+    if (p.stockQuantity !== null && p.stockQuantity < 5) {
+      return '<span class="badge low-stock">Low Stock</span>';
+    }
+    if (p.availability === 'AVAILABLE_ON_REQUEST') {
+      return '<span class="badge on-request">On Request</span>';
+    }
+    return '<span class="badge in-stock">In Stock</span>';
+  }
+
+  function editField(el, productId, field, currentValue) {
+    if (el.querySelector('input')) return; // Already editing
+
+    const isStock = field === 'stockQuantity';
+    const displayValue = currentValue === 'null' || currentValue === null ? '' : currentValue;
+
+    el.innerHTML = `<input type="number" value="${displayValue}" placeholder="${isStock ? 'Empty=unlimited' : ''}"
+      onkeydown="if(event.key==='Enter')saveField(this,'${productId}','${field}')"
+      onblur="saveField(this,'${productId}','${field}')">`;
+    el.querySelector('input').focus();
+  }
+
+  async function saveField(input, productId, field) {
+    let value = input.value.trim();
+
+    if (field === 'stockQuantity') {
+      value = value === '' ? null : parseInt(value);
+    } else {
+      value = parseFloat(value);
+      if (isNaN(value) || value < 0) {
+        loadProducts(); // Reset
+        return;
+      }
+    }
+
+    try {
+      const body = {};
+      body[field] = value;
+
+      // Auto-update availability when stock changes
+      if (field === 'stockQuantity' && value !== null && value <= 0) {
+        body.availability = 'OUT_OF_STOCK';
+      } else if (field === 'stockQuantity' && value !== null && value > 0) {
+        const product = products.find(p => p.id === productId);
+        if (product && product.availability === 'OUT_OF_STOCK') {
+          body.availability = 'IN_STOCK';
+        }
+      }
+
+      await apiFetch(`/admin/api/products/${productId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      });
+      showToast('Saved!');
+      await loadProducts();
+    } catch (e) {
+      showToast('Failed to save', true);
+    }
+  }
+
+  function uploadImage(productId) {
+    if (!cloudinaryConfig.cloudinaryCloudName || !cloudinaryConfig.cloudinaryUploadPreset) {
+      // Fallback: prompt for URL directly
+      const url = prompt('Enter image URL (set up Cloudinary for direct upload):');
+      if (url) saveImageUrl(productId, url);
+      return;
+    }
+
+    // Use Cloudinary upload widget
+    if (!window.cloudinary) {
+      // Load Cloudinary widget script dynamically
+      const script = document.createElement('script');
+      script.src = 'https://upload-widget.cloudinary.com/latest/global/all.js';
+      script.onload = () => openCloudinaryWidget(productId);
+      document.head.appendChild(script);
+    } else {
+      openCloudinaryWidget(productId);
+    }
+  }
+
+  function openCloudinaryWidget(productId) {
+    const widget = window.cloudinary.createUploadWidget({
+      cloudName: cloudinaryConfig.cloudinaryCloudName,
+      uploadPreset: cloudinaryConfig.cloudinaryUploadPreset,
+      sources: ['local', 'camera'],
+      multiple: false,
+      maxFiles: 1,
+      cropping: true,
+      croppingAspectRatio: 1,
+      maxImageFileSize: 5000000, // 5MB
+      folder: 'allivanfresh-products',
+    }, async (error, result) => {
+      if (!error && result && result.event === 'success') {
+        await saveImageUrl(productId, result.info.secure_url);
+      }
+    });
+    widget.open();
+  }
+
+  async function saveImageUrl(productId, imageUrl) {
+    try {
+      await apiFetch(`/admin/api/products/${productId}`, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ imageUrl }),
+      });
+      showToast('Image updated!');
+      await loadProducts();
+    } catch (e) {
+      showToast('Failed to update image', true);
+    }
+  }
+
+  async function removeImage(productId) {
+    if (!confirm('Remove this product image?')) return;
+    await saveImageUrl(productId, null);
+  }
+
+  function viewImage(url) {
+    window.open(url, '_blank');
+  }
+
+  function apiFetch(url, options = {}) {
+    return fetch(url, {
+      ...options,
+      headers: {
+        'Authorization': `Bearer ${token}`,
+        ...options.headers,
+      },
+    });
+  }
+
+  function showToast(msg, isError = false) {
+    const toast = document.getElementById('toast');
+    toast.textContent = msg;
+    toast.className = `toast show ${isError ? 'error' : ''}`;
+    setTimeout(() => toast.className = 'toast', 2500);
+  }
+</script>
+</body>
+</html>

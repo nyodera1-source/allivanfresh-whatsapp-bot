@@ -1,6 +1,8 @@
 import express, { Request, Response, NextFunction } from 'express';
+import path from 'path';
 import { config } from './config/env';
 import whatsappWebhookRouter from './webhooks/whatsapp-webhook';
+import adminRouter from './routes/admin.routes';
 
 const app = express();
 
@@ -33,9 +35,16 @@ app.get('/', (_req: Request, res: Response) => {
     endpoints: {
       health: '/health',
       webhook: '/webhook/whatsapp',
+      admin: '/admin',
     },
   });
 });
+
+// Static files for admin panel
+app.use('/public', express.static(path.resolve('public')));
+
+// Admin panel
+app.use('/admin', adminRouter);
 
 // WhatsApp webhook
 app.use('/webhook/whatsapp', whatsappWebhookRouter);

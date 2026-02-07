@@ -1,5 +1,5 @@
 import { prisma } from '../database/client';
-import { Product, ProductCategory, AvailabilityStatus } from '@prisma/client';
+import { Product, ProductCategory, AvailabilityStatus, Prisma } from '@prisma/client';
 
 export class ProductService {
   /**
@@ -100,7 +100,7 @@ export class ProductService {
         catalog += `### ${name}\n`;
         catalog += `- Price: KES ${product.basePrice} ${product.unit}\n`;
         catalog += `- Description: ${product.description}\n`;
-        catalog += `- Availability: ${this.formatAvailability(product.availability)}\n`;
+        catalog += `- Availability: ${this.formatAvailability(product.availability, product.stockQuantity)}\n`;
 
         if (product.availabilityNotes) {
           catalog += `- Note: ${product.availabilityNotes}\n`;
@@ -131,9 +131,54 @@ export class ProductService {
   }
 
   /**
+   * Decrement stock for ordered items. Auto-marks OUT_OF_STOCK when quantity hits 0.
+   */
+  async decrementStock(productId: string, quantity: number): Promise<void> {
+    const product = await prisma.product.findUnique({ where: { id: productId } });
+    if (!product || product.stockQuantity === null) return; // null = unlimited
+
+    const newQty = Math.max(0, product.stockQuantity - Math.ceil(quantity));
+    const updates: any = { stockQuantity: newQty };
+    if (newQty === 0) {
+      updates.availability = AvailabilityStatus.OUT_OF_STOCK;
+    }
+
+    await prisma.product.update({ where: { id: productId }, data: updates });
+    console.log(`[Stock] ${product.name}: ${product.stockQuantity} → ${newQty}`);
+  }
+
+  /**
+   * Update a product (used by admin panel)
+   */
+  async updateProduct(productId: string, data: {
+    basePrice?: number;
+    stockQuantity?: number | null;
+    availability?: AvailabilityStatus;
+    imageUrl?: string | null;
+    isActive?: boolean;
+  }): Promise<Product> {
+    return prisma.product.update({
+      where: { id: productId },
+      data: data as Prisma.ProductUpdateInput,
+    });
+  }
+
+  /**
+   * Check if a product is in stock
+   */
+  isInStock(product: Product): boolean {
+    if (product.availability === AvailabilityStatus.OUT_OF_STOCK) return false;
+    if (product.stockQuantity !== null && product.stockQuantity <= 0) return false;
+    return true;
+  }
+
+  /**
    * Format availability status
    */
-  private formatAvailability(status: AvailabilityStatus): string {
+  private formatAvailability(status: AvailabilityStatus, stockQuantity?: number | null): string {
+    if (stockQuantity !== undefined && stockQuantity !== null && stockQuantity <= 0) {
+      return 'OUT OF STOCK';
+    }
     switch (status) {
       case AvailabilityStatus.IN_STOCK:
         return 'In Stock';

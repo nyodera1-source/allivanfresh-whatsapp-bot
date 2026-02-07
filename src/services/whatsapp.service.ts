@@ -55,6 +55,50 @@ export class WhatsAppService {
   }
 
   /**
+   * Send an image message via wasenderapi
+   */
+  async sendImage(to: string, imageUrl: string, caption?: string): Promise<WhatsAppApiResponse> {
+    try {
+      const cleanPhone = to.replace(/@.*$/, '');
+
+      const payload: any = {
+        to: cleanPhone,
+        imageUrl: imageUrl,
+      };
+      if (caption) {
+        payload.text = caption;
+      }
+
+      console.log(`[WhatsApp] Sending image to ${cleanPhone}: ${imageUrl.substring(0, 60)}`);
+
+      const response = await axios.post(
+        'https://www.wasenderapi.com/api/send-message',
+        payload,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': `Bearer ${this.apiKey}`,
+          },
+          timeout: 15000, // 15 second timeout for images
+        }
+      );
+
+      console.log(`[WhatsApp] Image sent successfully to ${cleanPhone}`);
+
+      return {
+        success: true,
+        messageId: response.data.id || response.data.messageId,
+      };
+    } catch (error: any) {
+      console.error('[WhatsApp] Error sending image:', error.response?.data || error.message);
+      return {
+        success: false,
+        error: error.response?.data?.message || error.message || 'Failed to send image',
+      };
+    }
+  }
+
+  /**
    * Send message with retry logic
    */
   async sendMessageWithRetry(
