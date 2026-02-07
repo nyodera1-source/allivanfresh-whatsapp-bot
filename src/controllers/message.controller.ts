@@ -4,7 +4,7 @@ import { ConversationService } from '../services/conversation.service';
 import { ProductService } from '../services/product.service';
 import { RecommendationService } from '../services/recommendation.service';
 import { OrderController } from './order.controller';
-import { getDeliveryQuote, getDeliveryQuoteFromCoords, getDeliveryQuoteFromDistance, parseKmFromText, DeliveryQuote } from '../services/delivery.service';
+import { getDeliveryQuote, getDeliveryQuoteFromCoords, getDeliveryQuoteFromDistance, parseKmFromText, classifyCart, DeliveryQuote } from '../services/delivery.service';
 
 import { WhatsAppIncomingMessage } from '../models/whatsapp-message';
 import { ClaudeActionType, ConversationStep } from '../config/constants';
@@ -75,20 +75,24 @@ export class MessageController {
       let deliveryQuote: DeliveryQuote | null = null;
       let locationNotFound = false;
       if (state.step === ConversationStep.REQUESTING_LOCATION) {
+        // Classify cart for cart-aware delivery fee
+        const cartContents = classifyCart(state.cart);
+
         // Try: 1) Known locations + Nominatim via getDeliveryQuote
-        deliveryQuote = await getDeliveryQuote(text);
+        deliveryQuote = await getDeliveryQuote(text, cartContents);
 
         // 2) If that failed, check if customer gave a km distance (e.g. "about 10km")
         if (!deliveryQuote) {
           const kmDistance = parseKmFromText(text);
           if (kmDistance) {
-            deliveryQuote = getDeliveryQuoteFromDistance(kmDistance, text);
+            deliveryQuote = getDeliveryQuoteFromDistance(kmDistance, text, cartContents);
           }
         }
 
         if (deliveryQuote) {
           state.deliveryDistanceKm = deliveryQuote.distanceKm;
           state.deliveryFee = deliveryQuote.fee;
+          state.deliveryFeeReason = deliveryQuote.feeReason;
           state.deliveryZone = deliveryQuote.zone;
           state.deliveryLocation = text;
           // Move past REQUESTING_LOCATION so next messages aren't treated as locations
@@ -157,17 +161,22 @@ export class MessageController {
     const customer = await this.conversationService.getOrCreateCustomer(from);
     const state = await this.conversationService.getState(customer.id);
 
+    // Classify cart for cart-aware delivery fee
+    const cartContents = classifyCart(state.cart);
+
     // Calculate delivery quote from exact GPS coordinates
     const locationLabel = location.name || location.address || `Pinned location`;
     const deliveryQuote = getDeliveryQuoteFromCoords(
       location.latitude,
       location.longitude,
-      locationLabel
+      locationLabel,
+      cartContents
     );
 
     // Update state with delivery info and move past location step
     state.deliveryDistanceKm = deliveryQuote.distanceKm;
     state.deliveryFee = deliveryQuote.fee;
+    state.deliveryFeeReason = deliveryQuote.feeReason;
     state.deliveryZone = deliveryQuote.zone;
     state.deliveryLocation = locationLabel;
     state.step = ConversationStep.CONFIRMING_ORDER;

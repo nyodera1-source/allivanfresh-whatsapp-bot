@@ -24,6 +24,7 @@ export interface ConversationState {
   deliveryNotes?: string;
   deliveryDistanceKm?: number;
   deliveryFee?: number;
+  deliveryFeeReason?: 'free_anchor' | 'veg_only_flat' | 'distance_based';
   deliveryZone?: 'town' | 'nearby' | 'far';
   lastProductViewed?: string;
   language: 'en' | 'sw' | 'mixed';

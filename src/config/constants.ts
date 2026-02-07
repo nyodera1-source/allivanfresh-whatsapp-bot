@@ -38,11 +38,21 @@ export enum ClaudeIntent {
 // Business configuration
 export const BUSINESS_CONFIG = {
   name: 'AllivanFresh',
-  tagline: 'Fresh to your door in Kisumu',
+  tagline: 'Premium fresh chicken & fish delivered FREE. Fresh vegetables available as add-ons.',
+  bio: 'Premium fresh chicken & fish delivered FREE 🚚 Fresh vegetables available as add ons. Daily sourcing, trusted quality.',
   deliveryArea: 'Kisumu',
   sourceLocation: 'Kisumu',
-  deliveryModel: 'next-day',
-  paymentMethod: 'cash-on-delivery',
+  deliveryModel: 'same-day-or-next-day',
+  paymentMethod: 'M-PESA',
+  vegOnlyDeliveryFee: 250,
+  freeDeliveryRadiusKm: 5,
+} as const;
+
+// Category descriptions for Claude and catalog
+export const CATEGORY_DESCRIPTIONS = {
+  FISH: 'Lake fresh fish, cleaned and ready to cook. Free delivery on all fish orders.',
+  CHICKEN: 'Freshly sourced chicken, hygienically handled. Free delivery included.',
+  VEGETABLES: 'Fresh vegetables available as add ons to chicken or fish orders. Veg only orders attract a delivery fee.',
 } as const;
 
 // Recommendation settings

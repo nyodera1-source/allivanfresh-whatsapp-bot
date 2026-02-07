@@ -1,5 +1,6 @@
 import { prisma } from '../database/client';
 import { Product, ProductCategory, AvailabilityStatus, Prisma } from '@prisma/client';
+import { CATEGORY_DESCRIPTIONS } from '../config/constants';
 
 export class ProductService {
   /**
@@ -79,6 +80,7 @@ export class ProductService {
 
   /**
    * Format products for Claude's catalog
+   * Shows categories in order: Fish → Chicken → Vegetables with descriptions
    */
   formatProductCatalog(products: Product[]): string {
     if (products.length === 0) {
@@ -87,12 +89,22 @@ export class ProductService {
 
     const grouped = this.groupProductsByCategory(products);
 
+    // Display categories in strategic order: anchor products first, then add-ons
+    const categoryOrder: Array<{ key: string; description: string }> = [
+      { key: 'FISH', description: CATEGORY_DESCRIPTIONS.FISH },
+      { key: 'CHICKEN', description: CATEGORY_DESCRIPTIONS.CHICKEN },
+      { key: 'VEGETABLES', description: CATEGORY_DESCRIPTIONS.VEGETABLES },
+    ];
+
     let catalog = '';
 
-    Object.entries(grouped).forEach(([category, products]) => {
-      catalog += `\n## ${category.toUpperCase()}\n\n`;
+    for (const { key, description } of categoryOrder) {
+      const categoryProducts = grouped[key];
+      if (!categoryProducts || categoryProducts.length === 0) continue;
 
-      products.forEach((product) => {
+      catalog += `\n## ${key}\n_${description}_\n\n`;
+
+      categoryProducts.forEach((product) => {
         const name = product.nameSwahili
           ? `${product.name} (${product.nameSwahili})`
           : product.name;
@@ -108,7 +120,23 @@ export class ProductService {
 
         catalog += `- Product ID: ${product.id}\n\n`;
       });
-    });
+    }
+
+    // Include any other categories not in the standard order
+    for (const [category, categoryProducts] of Object.entries(grouped)) {
+      if (categoryOrder.some(c => c.key === category)) continue;
+      catalog += `\n## ${category}\n\n`;
+      categoryProducts.forEach((product) => {
+        const name = product.nameSwahili
+          ? `${product.name} (${product.nameSwahili})`
+          : product.name;
+        catalog += `### ${name}\n`;
+        catalog += `- Price: KES ${product.basePrice} ${product.unit}\n`;
+        catalog += `- Description: ${product.description}\n`;
+        catalog += `- Availability: ${this.formatAvailability(product.availability, product.stockQuantity)}\n`;
+        catalog += `- Product ID: ${product.id}\n\n`;
+      });
+    }
 
     return catalog;
   }

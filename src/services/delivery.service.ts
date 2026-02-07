@@ -100,6 +100,43 @@ export interface DeliveryQuote {
   fee: number; // KES
   zone: 'town' | 'nearby' | 'far';
   minimumOrderRequired?: number; // only for 'far' zone
+  feeReason?: 'free_anchor' | 'veg_only_flat' | 'distance_based';
+}
+
+/**
+ * Cart content classification for delivery fee calculation
+ */
+export interface CartContents {
+  hasFishOrChicken: boolean;
+  hasVegetablesOnly: boolean;
+  isEmpty: boolean;
+}
+
+/**
+ * Analyze cart items to determine if they contain fish/chicken anchor products
+ */
+export function classifyCart(cart: Array<{ productId: string; productName: string }>): CartContents {
+  if (cart.length === 0) {
+    return { hasFishOrChicken: false, hasVegetablesOnly: false, isEmpty: true };
+  }
+
+  const hasFishOrChicken = cart.some(item => {
+    const name = item.productName.toLowerCase();
+    return name.includes('tilapia') ||
+           name.includes('nile perch') ||
+           name.includes('sangara') ||
+           name.includes('broiler') ||
+           name.includes('kienyeji') ||
+           name.includes('chicken') ||
+           name.includes('kuku') ||
+           name.includes('samaki');
+  });
+
+  return {
+    hasFishOrChicken,
+    hasVegetablesOnly: !hasFishOrChicken,
+    isEmpty: false,
+  };
 }
 
 /**
@@ -250,12 +287,9 @@ function toRadians(degrees: number): number {
 }
 
 /**
- * Calculate delivery fee based on distance
- * - Within ~5km (Kisumu town): FREE
- * - Within 15km: KES 100
- * - Beyond 15km: KES 10/km (minimum order KES 5,000)
+ * Distance-only fee calculation (used for outside-town orders)
  */
-function calculateFee(distanceKm: number): DeliveryQuote['fee'] {
+function calculateDistanceFee(distanceKm: number): number {
   if (distanceKm <= 5) return 0;
   if (distanceKm <= 15) return 100;
   return Math.round(distanceKm * 10);
@@ -265,6 +299,31 @@ function getZone(distanceKm: number): DeliveryQuote['zone'] {
   if (distanceKm <= 5) return 'town';
   if (distanceKm <= 15) return 'nearby';
   return 'far';
+}
+
+/**
+ * Cart-aware delivery fee calculation
+ * Rules:
+ * 1. In-town (≤5km) + fish/chicken in cart → FREE
+ * 2. In-town (≤5km) + veg-only cart → KES 250 flat
+ * 3. Outside town (>5km) → distance-based (same as before)
+ */
+function calculateFeeWithCart(
+  distanceKm: number,
+  cartContents?: CartContents
+): { fee: number; feeReason: DeliveryQuote['feeReason'] } {
+  const zone = getZone(distanceKm);
+
+  if (zone === 'town' && cartContents) {
+    if (cartContents.hasFishOrChicken) {
+      return { fee: 0, feeReason: 'free_anchor' };
+    }
+    // Veg only or empty cart in town
+    return { fee: 250, feeReason: 'veg_only_flat' };
+  }
+
+  // Outside town or no cart info: distance-based
+  return { fee: calculateDistanceFee(distanceKm), feeReason: 'distance_based' };
 }
 
 /**
@@ -312,16 +371,18 @@ export function parseKmFromText(text: string): number | null {
  */
 export function getDeliveryQuoteFromDistance(
   distanceKm: number,
-  locationName: string
+  locationName: string,
+  cartContents?: CartContents
 ): DeliveryQuote {
   const zone = getZone(distanceKm);
-  const fee = calculateFee(distanceKm);
+  const { fee, feeReason } = calculateFeeWithCart(distanceKm, cartContents);
 
   const quote: DeliveryQuote = {
     locationName,
     distanceKm,
     fee,
     zone,
+    feeReason,
   };
 
   if (zone === 'far') {
@@ -329,7 +390,7 @@ export function getDeliveryQuoteFromDistance(
   }
 
   console.log(
-    `[Delivery] Quote from distance: "${locationName}" → ${distanceKm}km, zone=${zone}, fee=KES ${fee}`
+    `[Delivery] Quote from distance: "${locationName}" → ${distanceKm}km, zone=${zone}, fee=KES ${fee}, reason=${feeReason}`
   );
 
   return quote;
@@ -340,12 +401,13 @@ export function getDeliveryQuoteFromDistance(
  * Tries: 1) Known locations table, 2) Nominatim geocoding
  */
 export async function getDeliveryQuote(
-  locationName: string
+  locationName: string,
+  cartContents?: CartContents
 ): Promise<DeliveryQuote | null> {
   // 1. Try known locations table first (instant, most reliable for local places)
   const known = lookupKnownLocation(locationName);
   if (known) {
-    return getDeliveryQuoteFromDistance(known.distanceKm, locationName);
+    return getDeliveryQuoteFromDistance(known.distanceKm, locationName, cartContents);
   }
 
   // 2. Try Nominatim geocoding
@@ -365,13 +427,14 @@ export async function getDeliveryQuote(
 
   const roadDistance = Math.round(straightLineDistance * ROAD_MULTIPLIER);
   const zone = getZone(roadDistance);
-  const fee = calculateFee(roadDistance);
+  const { fee, feeReason } = calculateFeeWithCart(roadDistance, cartContents);
 
   const quote: DeliveryQuote = {
     locationName,
     distanceKm: roadDistance,
     fee,
     zone,
+    feeReason,
   };
 
   if (zone === 'far') {
@@ -379,7 +442,7 @@ export async function getDeliveryQuote(
   }
 
   console.log(
-    `[Delivery] Quote for "${locationName}": ${roadDistance}km, zone=${zone}, fee=KES ${fee}`
+    `[Delivery] Quote for "${locationName}": ${roadDistance}km, zone=${zone}, fee=KES ${fee}, reason=${feeReason}`
   );
 
   return quote;
@@ -391,7 +454,8 @@ export async function getDeliveryQuote(
 export function getDeliveryQuoteFromCoords(
   lat: number,
   lon: number,
-  locationLabel?: string
+  locationLabel?: string,
+  cartContents?: CartContents
 ): DeliveryQuote {
   const straightLineDistance = haversineDistance(
     KISUMU_CENTER.lat,
@@ -402,13 +466,14 @@ export function getDeliveryQuoteFromCoords(
 
   const roadDistance = Math.round(straightLineDistance * ROAD_MULTIPLIER);
   const zone = getZone(roadDistance);
-  const fee = calculateFee(roadDistance);
+  const { fee, feeReason } = calculateFeeWithCart(roadDistance, cartContents);
 
   const quote: DeliveryQuote = {
     locationName: locationLabel || `GPS (${lat.toFixed(4)}, ${lon.toFixed(4)})`,
     distanceKm: roadDistance,
     fee,
     zone,
+    feeReason,
   };
 
   if (zone === 'far') {
@@ -416,7 +481,7 @@ export function getDeliveryQuoteFromCoords(
   }
 
   console.log(
-    `[Delivery] Quote from GPS [${lat}, ${lon}]: ${roadDistance}km, zone=${zone}, fee=KES ${fee}`
+    `[Delivery] Quote from GPS [${lat}, ${lon}]: ${roadDistance}km, zone=${zone}, fee=KES ${fee}, reason=${feeReason}`
   );
 
   return quote;
