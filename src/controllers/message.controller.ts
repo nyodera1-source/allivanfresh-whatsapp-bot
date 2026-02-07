@@ -8,6 +8,7 @@ import { getDeliveryQuote, getDeliveryQuoteFromCoords, getDeliveryQuoteFromDista
 
 import { WhatsAppIncomingMessage } from '../models/whatsapp-message';
 import { ClaudeActionType, ConversationStep } from '../config/constants';
+import { Product } from '@prisma/client';
 
 export class MessageController {
   private whatsappService: WhatsAppService;
@@ -117,6 +118,12 @@ export class MessageController {
 
       // Execute actions (and collect product images to send)
       const productImagesToSend = await this.executeActions(customer.id, claudeResponse.actions, state);
+
+      // Auto-detect: if Claude didn't send product images, detect from user message + response
+      if (productImagesToSend.length === 0 && ['browsing', 'inquiry', 'greeting'].includes(claudeResponse.intent)) {
+        const autoImages = this.detectProductImages(text, claudeResponse.message, products);
+        productImagesToSend.push(...autoImages);
+      }
 
       // Send product images before the text response
       if (productImagesToSend && productImagesToSend.length > 0) {
@@ -289,5 +296,49 @@ export class MessageController {
     }
 
     return imagesToSend;
+  }
+
+  /**
+   * Auto-detect products mentioned in user message and send their images.
+   * Fallback for when Claude doesn't include show_products action.
+   */
+  private detectProductImages(
+    userMessage: string,
+    botResponse: string,
+    products: Product[]
+  ): { imageUrl: string; caption: string }[] {
+    const images: { imageUrl: string; caption: string }[] = [];
+    const combined = `${userMessage} ${botResponse}`.toLowerCase();
+
+    for (const product of products) {
+      if (!product.imageUrl) continue;
+
+      // Check product name and Swahili name against combined text
+      const nameMatch = product.name.toLowerCase().split(/[\s()/]+/).filter(w => w.length > 3);
+      const swahiliMatch = product.nameSwahili?.toLowerCase().split(/[\s()/]+/).filter(w => w.length > 3) || [];
+
+      const allKeywords = [...nameMatch, ...swahiliMatch];
+
+      for (const keyword of allKeywords) {
+        if (combined.includes(keyword)) {
+          // Avoid duplicates
+          if (!images.some(img => img.imageUrl === product.imageUrl)) {
+            images.push({
+              imageUrl: product.imageUrl,
+              caption: `${product.name} — KES ${product.basePrice} ${product.unit}`,
+            });
+          }
+          break;
+        }
+      }
+
+      if (images.length >= 3) break; // max 3 auto-detected images
+    }
+
+    if (images.length > 0) {
+      console.log(`[AutoImage] Detected ${images.length} products from message text`);
+    }
+
+    return images;
   }
 }
