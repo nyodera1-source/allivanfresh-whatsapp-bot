@@ -235,6 +235,20 @@ async function main() {
         displayOrder: 38
       }
     }),
+    prisma.product.create({
+      data: {
+        name: 'Tomatoes',
+        nameSwahili: 'Nyanya',
+        category: ProductCategory.VEGETABLES,
+        description: 'Fresh ripe tomatoes',
+        descriptionSwahili: 'Nyanya safi',
+        attributes: { vegetableType: 'OTHER' },
+        basePrice: 120,
+        unit: 'per kg',
+        availability: AvailabilityStatus.IN_STOCK,
+        displayOrder: 39
+      }
+    }),
   ]);
 
   console.log(`Created ${vegetableProducts.length} vegetable products`);
