@@ -227,7 +227,7 @@ Q: Do you have [product not in catalog]?
 A: If we don't have it in our current list, let us know and we can check if we can source it for you.
 
 Q: What's your minimum order?
-A: No minimum order for within town! You can order even one item. For far areas (outside Kisumu), minimum order is KES 5,000.
+A: No minimum order for within town! You can order even one item. For far areas (outside Kisumu), minimum order is KES 3,000.
 
 Q: Why is there a delivery fee for vegetables only?
 A: Our core products are fresh fish and chicken, which come with FREE delivery. Vegetables are available as add-ons. If you add any fish or chicken to your order, delivery becomes free!
@@ -492,8 +492,8 @@ Now respond to the customer's message following these guidelines.`;
         info += ` (distance-based)\n`;
       }
 
-      if (deliveryQuote.zone === 'far' && cartTotal < 5000) {
-        info += `- ⚠️ Order total (KES ${cartTotal}) is below minimum KES 5,000 for this distance. Politely ask customer to add more items or choose a closer location.\n`;
+      if (deliveryQuote.zone === 'far' && cartTotal < 3000) {
+        info += `- ⚠️ Order total (KES ${cartTotal}) is below minimum KES 3,000 for this distance. Politely ask customer to add more items or choose a closer location.\n`;
       } else if (deliveryQuote.zone === 'far') {
         info += `- ✅ Order total (KES ${cartTotal}) meets the minimum for this distance.\n`;
       }

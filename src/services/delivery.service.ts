@@ -386,7 +386,7 @@ export function getDeliveryQuoteFromDistance(
   };
 
   if (zone === 'far') {
-    quote.minimumOrderRequired = 5000;
+    quote.minimumOrderRequired = 3000;
   }
 
   console.log(
@@ -438,7 +438,7 @@ export async function getDeliveryQuote(
   };
 
   if (zone === 'far') {
-    quote.minimumOrderRequired = 5000;
+    quote.minimumOrderRequired = 3000;
   }
 
   console.log(
@@ -477,7 +477,7 @@ export function getDeliveryQuoteFromCoords(
   };
 
   if (zone === 'far') {
-    quote.minimumOrderRequired = 5000;
+    quote.minimumOrderRequired = 3000;
   }
 
   console.log(
