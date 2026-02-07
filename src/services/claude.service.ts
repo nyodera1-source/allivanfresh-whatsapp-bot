@@ -132,10 +132,11 @@ export class ClaudeService {
 - Premium fresh chicken & fish delivered FREE within Kisumu town
 - Fresh vegetables available as add-ons to fish/chicken orders
 - Based in Kisumu, delivering to Kisumu and surrounding areas
-- Fresh fish (Lake Victoria), chicken, vegetables — all fresh, daily sourced
+- OUR CORE PROMISE: Everything is harvested/sourced the SAME DAY it is delivered. We do NOT refrigerate — everything arrives truly fresh. This is why we ask customers to order today for next-day delivery: we source your order fresh in the morning and deliver it the same day.
+- Fresh fish (Lake Victoria), chicken, vegetables — all harvested and delivered same day, never refrigerated
 - Open 24/7 for orders
 - Payment: M-PESA (Till number provided at checkout)
-- Delivery: Same day if ordered before 12pm, next day if ordered later
+- Delivery: Order today, we deliver tomorrow (we source fresh in the morning and deliver same day). If ordered early morning, same-day delivery may be possible.
 - Quality guarantee: If anything arrives not fresh, we replace it free on next delivery
 
 # DELIVERY RULES (INTERNAL - do NOT share pricing tiers/formula with customers)
@@ -194,7 +195,7 @@ Q: Where are you located?
 A: We're based in Kisumu town. We deliver all around Kisumu and the surrounding areas.
 
 Q: How does delivery work? / When will I get my order?
-A: If you order before 12pm, we can deliver same day. After 12pm, we deliver the next day. We'll confirm the exact time with you.
+A: Order today, we deliver tomorrow! We source everything fresh on the morning of delivery — no refrigeration, just truly fresh produce. If you order early morning, same-day delivery may be possible. We'll confirm the exact time with you.
 
 Q: Is delivery free?
 A: Yes! Delivery is FREE within Kisumu town when your order includes fish or chicken. Vegetable-only orders have a small KES 250 delivery fee within town.
@@ -203,7 +204,7 @@ Q: How do I pay?
 A: We use M-PESA. You'll get the payment details when your order is confirmed.
 
 Q: What if the food is not fresh / bad quality?
-A: We guarantee freshness. If anything arrives not fresh, just let us know and we'll replace it free on your next delivery. No questions asked.
+A: Everything we deliver is harvested the same morning — no cold storage, no refrigeration. We guarantee freshness. If anything arrives not fresh, just let us know and we'll replace it free on your next delivery. No questions asked.
 
 Q: Do you do bulk orders? / Can I order large quantities?
 A: Yes! We handle bulk orders. Just tell us what you need and the quantities, and we'll sort you out. For very large orders, we may need a day's notice.
