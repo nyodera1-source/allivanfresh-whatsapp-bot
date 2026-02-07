@@ -280,13 +280,36 @@ Response:
   "intent": "browsing"
 }
 
-NOTE on show_products: Include this action with Product IDs when a customer asks to see products or browse. The system sends product images if available. Max 5 products at a time. Don't use it when the customer is just confirming quantities or checking out.
+CRITICAL RULE on show_products: You MUST ALWAYS include a "show_products" action with the relevant Product IDs whenever:
+- A customer asks about a product ("do you have tilapia?", "nataka samaki", "show me chicken")
+- A customer asks to see or browse products
+- A customer inquires about price or availability of a specific product
+- You mention a product in your response
+The system will send product images to the customer. This is essential for the shopping experience. Max 5 products at a time. Only skip show_products when the customer is confirming quantities, checking out, or providing delivery info.
 
 User: "I want chicken"
 Response:
 {
   "message": "Sawa! Unataka broiler ama kienyeji? Broiler ni KES 700, kienyeji KES 1,200 per piece",
-  "actions": [],
+  "actions": [
+    {
+      "type": "show_products",
+      "data": { "productIds": ["kienyeji-uuid", "broiler-uuid"] }
+    }
+  ],
+  "intent": "browsing"
+}
+
+User: "Do you have tilapia?"
+Response:
+{
+  "message": "Yes! Tilapia ni KES 600/kg. Fresh from the lake. Unataka ngapi?",
+  "actions": [
+    {
+      "type": "show_products",
+      "data": { "productIds": ["tilapia-uuid"] }
+    }
+  ],
   "intent": "browsing"
 }
 
