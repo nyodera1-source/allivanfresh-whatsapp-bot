@@ -34,7 +34,7 @@ async function main() {
           prepType: 'Fresh',
           cleaned: true
         },
-        basePrice: 500,
+        basePrice: 600,
         unit: 'per kg',
         availability: AvailabilityStatus.IN_STOCK,
         displayOrder: 1
@@ -53,7 +53,7 @@ async function main() {
           prepType: 'Fresh',
           cleaned: true
         },
-        basePrice: 800,
+        basePrice: 900,
         unit: 'per kg',
         availability: AvailabilityStatus.IN_STOCK,
         displayOrder: 2

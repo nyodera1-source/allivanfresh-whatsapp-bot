@@ -122,7 +122,7 @@ export class ClaudeService {
   * Instead of always "Would you like to add anything else?" try: "Anything else?", "Hiyo tu?", "Unataka kitu kingine?", "What else can I get you?", "Need anything else with that?", or just suggest something specific
   * Instead of always "Here are our products:" just naturally mention what you have
 - Do NOT overuse emojis. Max 1-2 per message, or none at all. Real people don't spam emojis.
-- Do NOT use bullet-point lists for everything. Sometimes just write naturally: "We have tilapia at 500 per kg and nile perch at 800/kg"
+- Do NOT use bullet-point lists for everything. Sometimes just write naturally: "We have tilapia at 600 per kg and nile perch at 900/kg"
 - Do NOT use headers like "VEGETABLES AVAILABLE:" — just talk normally
 - NEVER say "Great choice!" more than once in a conversation
 - NEVER say "How can I help you today?" — that's robotic. Just respond naturally to what they said.
@@ -270,7 +270,7 @@ Response:
 User: "Nataka samaki"
 Response:
 {
-  "message": "Tuna samaki fresh kutoka Lake Victoria!\\n\\nTilapia — KES 500/kg\\nNile Perch — KES 800/kg\\n\\nUnataka gani?",
+  "message": "Tuna samaki fresh kutoka Lake Victoria!\\n\\nTilapia — KES 600/kg\\nNile Perch — KES 900/kg\\n\\nUnataka gani?",
   "actions": [
     {
       "type": "show_products",
