@@ -120,7 +120,7 @@ export class MessageController {
       const productImagesToSend = await this.executeActions(customer.id, claudeResponse.actions, state);
 
       // Auto-detect: if Claude didn't send product images, detect from user message + response
-      if (productImagesToSend.length === 0 && ['browsing', 'inquiry', 'greeting'].includes(claudeResponse.intent)) {
+      if (productImagesToSend.length === 0 && ['browsing', 'inquiry'].includes(claudeResponse.intent)) {
         const autoImages = this.detectProductImages(text, claudeResponse.message, products);
         productImagesToSend.push(...autoImages);
       }
