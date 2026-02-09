@@ -23,29 +23,17 @@
       theme: {
         extend: {
           colors: {
-            navy: {
-              50: '#f0f4f8',
-              100: '#d9e2ec',
-              200: '#bcccdc',
-              300: '#9fb3c8',
-              400: '#6d8299',
-              500: '#3d5a80',
-              600: '#1e3a5f',
-              700: '#152238',
-              800: '#102a43',
-              900: '#0a1628',
-            },
-            accent: {
-              50: '#fff7ed',
-              100: '#ffedd5',
-              200: '#fed7aa',
-              300: '#fdba74',
-              400: '#fb923c',
-              500: '#e8651a',
-              600: '#d4570e',
-              700: '#b34a0a',
-              800: '#8c3d0b',
-              900: '#6b2f0d',
+            brand: {
+              50: '#f0fdf4',
+              100: '#dcfce7',
+              200: '#bbf7d0',
+              300: '#86efac',
+              400: '#4ade80',
+              500: '#22c55e',
+              600: '#2d6a4f',
+              700: '#1b4332',
+              800: '#14532d',
+              900: '#052e16',
             },
             whatsapp: '#25D366',
           }
@@ -95,38 +83,29 @@
     .faq-answer.open { max-height: 200px; }
     .faq-chevron { transition: transform 0.3s ease; }
     .faq-chevron.open { transform: rotate(180deg); }
-
-    /* Hero background */
-    .hero-bg {
-      background: linear-gradient(135deg, rgba(21,34,56,0.92) 0%, rgba(30,58,95,0.88) 50%, rgba(21,34,56,0.95) 100%),
-                  url('https://images.unsplash.com/photo-1606787366850-de6330128bfc?w=1400&q=80') center/cover no-repeat;
-    }
-
-    /* Nav scroll effect */
-    .nav-scrolled { box-shadow: 0 2px 16px rgba(0,0,0,0.15); }
   </style>
 </head>
 
 <body class="bg-white text-gray-800">
 
   <!-- ==================== NAVIGATION ==================== -->
-  <nav id="navbar" class="fixed top-0 w-full bg-navy-800/95 backdrop-blur-sm z-50 transition-all">
+  <nav class="fixed top-0 w-full bg-white/95 backdrop-blur-sm shadow-sm z-50">
     <div class="max-w-6xl mx-auto px-4 py-2 flex items-center justify-between">
       <a href="#">
-        <img src="images/logo.png" alt="AllivanFresh" class="h-12 w-auto">
+        <img src="images/logo.png" alt="AllivanFresh" class="h-14 md:h-16 w-auto">
       </a>
 
       <!-- Desktop nav -->
       <div class="hidden md:flex items-center gap-6">
-        <a href="#products" class="text-navy-200 hover:text-white transition text-sm">Products</a>
-        <a href="#how-it-works" class="text-navy-200 hover:text-white transition text-sm">How It Works</a>
-        <a href="#freshness" class="text-navy-200 hover:text-white transition text-sm">Why Us</a>
-        <a href="#faq" class="text-navy-200 hover:text-white transition text-sm">FAQ</a>
-        <a id="nav-cta" href="#" class="bg-accent-500 text-white px-5 py-2 rounded-full font-semibold hover:bg-accent-600 transition text-sm">Order on WhatsApp</a>
+        <a href="#products" class="text-gray-600 hover:text-brand-600 transition">Products</a>
+        <a href="#how-it-works" class="text-gray-600 hover:text-brand-600 transition">How It Works</a>
+        <a href="#freshness" class="text-gray-600 hover:text-brand-600 transition">Why Us</a>
+        <a href="#faq" class="text-gray-600 hover:text-brand-600 transition">FAQ</a>
+        <a id="nav-cta" href="#" class="bg-whatsapp text-white px-4 py-2 rounded-full font-semibold hover:bg-green-600 transition text-sm">Order on WhatsApp</a>
       </div>
 
       <!-- Mobile menu button -->
-      <button id="menu-toggle" class="md:hidden p-2 text-white" aria-label="Toggle menu">
+      <button id="menu-toggle" class="md:hidden p-2 text-gray-600" aria-label="Toggle menu">
         <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
           <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/>
         </svg>
@@ -134,41 +113,37 @@
     </div>
 
     <!-- Mobile menu -->
-    <div id="mobile-menu" class="hidden md:hidden border-t border-navy-600 bg-navy-800">
+    <div id="mobile-menu" class="hidden md:hidden border-t bg-white">
       <div class="px-4 py-3 flex flex-col gap-3">
-        <a href="#products" class="text-navy-200 hover:text-white py-1 mobile-link">Products</a>
-        <a href="#how-it-works" class="text-navy-200 hover:text-white py-1 mobile-link">How It Works</a>
-        <a href="#freshness" class="text-navy-200 hover:text-white py-1 mobile-link">Why Us</a>
-        <a href="#faq" class="text-navy-200 hover:text-white py-1 mobile-link">FAQ</a>
-        <a id="mobile-cta" href="#" class="bg-accent-500 text-white px-4 py-2 rounded-full font-semibold text-center hover:bg-accent-600 transition text-sm">Order on WhatsApp</a>
+        <a href="#products" class="text-gray-600 hover:text-brand-600 py-1 mobile-link">Products</a>
+        <a href="#how-it-works" class="text-gray-600 hover:text-brand-600 py-1 mobile-link">How It Works</a>
+        <a href="#freshness" class="text-gray-600 hover:text-brand-600 py-1 mobile-link">Why Us</a>
+        <a href="#faq" class="text-gray-600 hover:text-brand-600 py-1 mobile-link">FAQ</a>
+        <a id="mobile-cta" href="#" class="bg-whatsapp text-white px-4 py-2 rounded-full font-semibold text-center hover:bg-green-600 transition text-sm">Order on WhatsApp</a>
       </div>
     </div>
   </nav>
 
 
   <!-- ==================== HERO ==================== -->
-  <section class="hero-bg min-h-screen flex items-center text-white pt-16">
+  <section class="min-h-screen flex items-center bg-gradient-to-br from-brand-700 via-brand-600 to-brand-500 text-white pt-16">
     <div class="max-w-6xl mx-auto px-4 py-16 md:py-24">
       <div class="max-w-2xl">
-        <div class="inline-block bg-accent-500/20 border border-accent-500/40 rounded-full px-4 py-1.5 mb-6">
-          <span class="text-accent-300 text-sm font-medium">Fish &middot; Chicken &middot; Vegetables</span>
-        </div>
         <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6">
-          Fresh from the farm<br>
-          <span class="text-accent-400">to your door</span>
+          Fresh from the farm to your door
         </h1>
-        <p class="text-lg md:text-xl text-navy-200 mb-8 leading-relaxed">
+        <p class="text-lg md:text-xl text-brand-100 mb-8 leading-relaxed">
           Premium chicken, fish & vegetables. Harvested the same day we deliver. No refrigeration — just real freshness. Serving Kisumu and beyond.
         </p>
         <div class="flex flex-col sm:flex-row gap-4">
-          <a id="hero-cta" href="#" class="bg-accent-500 hover:bg-accent-600 text-white px-8 py-4 rounded-full font-bold text-lg text-center transition shadow-lg shadow-accent-500/30">
+          <a id="hero-cta" href="#" class="bg-whatsapp hover:bg-green-400 text-white px-8 py-4 rounded-full font-bold text-lg text-center transition shadow-lg">
             Order on WhatsApp
           </a>
-          <a href="#products" class="border-2 border-white/30 hover:border-white text-white px-8 py-4 rounded-full font-semibold text-lg text-center transition">
+          <a href="#products" class="border-2 border-white/50 hover:border-white text-white px-8 py-4 rounded-full font-semibold text-lg text-center transition">
             View Products
           </a>
         </div>
-        <p class="mt-6 text-navy-300 text-sm">Order today. We harvest fresh tomorrow morning and deliver to you.</p>
+        <p class="mt-6 text-brand-200 text-sm">Order today. We harvest fresh tomorrow morning and deliver to you.</p>
       </div>
     </div>
   </section>
@@ -178,53 +153,53 @@
   <section id="products" class="py-16 md:py-24 bg-gray-50">
     <div class="max-w-6xl mx-auto px-4">
       <div class="text-center mb-12">
-        <h2 class="text-3xl md:text-4xl font-bold text-navy-800 mb-3">Our Fresh Products</h2>
+        <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-3">Our Fresh Products</h2>
         <p class="text-gray-500 max-w-xl mx-auto">Everything sourced fresh on the morning of delivery. No cold storage, no preservatives.</p>
       </div>
 
       <!-- Fish -->
       <div class="mb-12">
         <div class="flex items-center gap-3 mb-6">
-          <h3 class="text-2xl font-bold text-navy-700">Fresh Fish</h3>
-          <span class="bg-accent-500 text-white text-xs font-bold px-3 py-1 rounded-full">FREE DELIVERY</span>
+          <h3 class="text-2xl font-bold text-brand-700">Fresh Fish</h3>
+          <span class="bg-brand-500 text-white text-xs font-bold px-3 py-1 rounded-full">FREE DELIVERY</span>
         </div>
         <p class="text-gray-500 mb-4">Lake fresh fish from Lake Victoria, cleaned and ready to cook.</p>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <!-- Tilapia -->
-          <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition group">
-            <div class="bg-navy-50 h-48 flex items-center justify-center">
+          <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition">
+            <div class="bg-brand-50 h-48 flex items-center justify-center">
               <div class="text-center">
                 <div class="text-5xl mb-2">🐟</div>
-                <span class="text-sm text-navy-600 font-medium">Tilapia (Medium)</span>
+                <span class="text-sm text-brand-600 font-medium">Tilapia (Medium)</span>
               </div>
             </div>
             <div class="p-4">
               <div class="flex justify-between items-start mb-1">
-                <h4 class="font-bold text-navy-800">Tilapia (Medium)</h4>
-                <span class="text-accent-500 font-bold">KES 600</span>
+                <h4 class="font-bold text-gray-900">Tilapia (Medium)</h4>
+                <span class="text-brand-600 font-bold">KES 600</span>
               </div>
               <p class="text-gray-400 text-sm mb-3">Samaki Tilapia &middot; per kg</p>
-              <button onclick="orderProduct('Tilapia', '1kg')" class="w-full bg-whatsapp text-white py-2.5 rounded-lg font-semibold hover:bg-green-600 transition text-sm">
+              <button onclick="orderProduct('Tilapia', '1kg')" class="w-full bg-whatsapp text-white py-2 rounded-lg font-semibold hover:bg-green-600 transition text-sm">
                 Order on WhatsApp
               </button>
             </div>
           </div>
 
           <!-- Nile Perch -->
-          <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition group">
-            <div class="bg-navy-50 h-48 flex items-center justify-center">
+          <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition">
+            <div class="bg-brand-50 h-48 flex items-center justify-center">
               <div class="text-center">
                 <div class="text-5xl mb-2">🐟</div>
-                <span class="text-sm text-navy-600 font-medium">Nile Perch</span>
+                <span class="text-sm text-brand-600 font-medium">Nile Perch</span>
               </div>
             </div>
             <div class="p-4">
               <div class="flex justify-between items-start mb-1">
-                <h4 class="font-bold text-navy-800">Nile Perch</h4>
-                <span class="text-accent-500 font-bold">KES 900</span>
+                <h4 class="font-bold text-gray-900">Nile Perch</h4>
+                <span class="text-brand-600 font-bold">KES 900</span>
               </div>
               <p class="text-gray-400 text-sm mb-3">Sangara &middot; per kg</p>
-              <button onclick="orderProduct('Nile Perch', '1kg')" class="w-full bg-whatsapp text-white py-2.5 rounded-lg font-semibold hover:bg-green-600 transition text-sm">
+              <button onclick="orderProduct('Nile Perch', '1kg')" class="w-full bg-whatsapp text-white py-2 rounded-lg font-semibold hover:bg-green-600 transition text-sm">
                 Order on WhatsApp
               </button>
             </div>
@@ -235,46 +210,46 @@
       <!-- Chicken -->
       <div class="mb-12">
         <div class="flex items-center gap-3 mb-6">
-          <h3 class="text-2xl font-bold text-navy-700">Fresh Chicken</h3>
-          <span class="bg-accent-500 text-white text-xs font-bold px-3 py-1 rounded-full">FREE DELIVERY</span>
+          <h3 class="text-2xl font-bold text-brand-700">Fresh Chicken</h3>
+          <span class="bg-brand-500 text-white text-xs font-bold px-3 py-1 rounded-full">FREE DELIVERY</span>
         </div>
         <p class="text-gray-500 mb-4">Freshly sourced chicken, hygienically handled. Free-range kienyeji and farm-raised broiler.</p>
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <!-- Kienyeji -->
-          <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition group">
-            <div class="bg-accent-50 h-48 flex items-center justify-center">
+          <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition">
+            <div class="bg-orange-50 h-48 flex items-center justify-center">
               <div class="text-center">
                 <div class="text-5xl mb-2">🍗</div>
-                <span class="text-sm text-accent-600 font-medium">Kienyeji Chicken</span>
+                <span class="text-sm text-orange-600 font-medium">Kienyeji Chicken</span>
               </div>
             </div>
             <div class="p-4">
               <div class="flex justify-between items-start mb-1">
-                <h4 class="font-bold text-navy-800">Kienyeji Chicken</h4>
-                <span class="text-accent-500 font-bold">KES 1,200</span>
+                <h4 class="font-bold text-gray-900">Kienyeji Chicken</h4>
+                <span class="text-brand-600 font-bold">KES 1,200</span>
               </div>
               <p class="text-gray-400 text-sm mb-3">Kuku Kienyeji &middot; per piece (~1.5kg)</p>
-              <button onclick="orderProduct('Kienyeji Chicken', '1 piece')" class="w-full bg-whatsapp text-white py-2.5 rounded-lg font-semibold hover:bg-green-600 transition text-sm">
+              <button onclick="orderProduct('Kienyeji Chicken', '1 piece')" class="w-full bg-whatsapp text-white py-2 rounded-lg font-semibold hover:bg-green-600 transition text-sm">
                 Order on WhatsApp
               </button>
             </div>
           </div>
 
           <!-- Broiler -->
-          <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition group">
-            <div class="bg-accent-50 h-48 flex items-center justify-center">
+          <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition">
+            <div class="bg-orange-50 h-48 flex items-center justify-center">
               <div class="text-center">
                 <div class="text-5xl mb-2">🍗</div>
-                <span class="text-sm text-accent-600 font-medium">Broiler Chicken</span>
+                <span class="text-sm text-orange-600 font-medium">Broiler Chicken</span>
               </div>
             </div>
             <div class="p-4">
               <div class="flex justify-between items-start mb-1">
-                <h4 class="font-bold text-navy-800">Broiler Chicken</h4>
-                <span class="text-accent-500 font-bold">KES 700</span>
+                <h4 class="font-bold text-gray-900">Broiler Chicken</h4>
+                <span class="text-brand-600 font-bold">KES 700</span>
               </div>
               <p class="text-gray-400 text-sm mb-3">Kuku wa Broiler &middot; per piece (1-1.2kg)</p>
-              <button onclick="orderProduct('Broiler Chicken', '1 piece')" class="w-full bg-whatsapp text-white py-2.5 rounded-lg font-semibold hover:bg-green-600 transition text-sm">
+              <button onclick="orderProduct('Broiler Chicken', '1 piece')" class="w-full bg-whatsapp text-white py-2 rounded-lg font-semibold hover:bg-green-600 transition text-sm">
                 Order on WhatsApp
               </button>
             </div>
@@ -285,80 +260,80 @@
       <!-- Vegetables -->
       <div>
         <div class="flex items-center gap-3 mb-6">
-          <h3 class="text-2xl font-bold text-navy-700">Fresh Vegetables</h3>
+          <h3 class="text-2xl font-bold text-brand-700">Fresh Vegetables</h3>
         </div>
         <p class="text-gray-500 mb-2">Fresh vegetables harvested on delivery day.</p>
-        <p class="text-sm text-accent-500 font-medium mb-4">Add to a fish or chicken order for FREE delivery within Kisumu town.</p>
+        <p class="text-sm text-brand-600 font-medium mb-4">Add to a fish or chicken order for FREE delivery within Kisumu town.</p>
         <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
 
-          <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4 hover:shadow-md hover:border-accent-200 transition text-center">
+          <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4 hover:shadow-md transition text-center">
             <div class="text-3xl mb-2">🥬</div>
-            <h4 class="font-semibold text-navy-800 text-sm">Sukuma Wiki</h4>
+            <h4 class="font-semibold text-gray-900 text-sm">Sukuma Wiki</h4>
             <p class="text-gray-400 text-xs">Kale</p>
-            <p class="text-accent-500 font-bold mt-1">KES 60<span class="text-gray-400 font-normal text-xs">/bunch</span></p>
+            <p class="text-brand-600 font-bold mt-1">KES 60<span class="text-gray-400 font-normal text-xs">/bunch</span></p>
           </div>
 
-          <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4 hover:shadow-md hover:border-accent-200 transition text-center">
+          <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4 hover:shadow-md transition text-center">
             <div class="text-3xl mb-2">🥬</div>
-            <h4 class="font-semibold text-navy-800 text-sm">Spinach</h4>
+            <h4 class="font-semibold text-gray-900 text-sm">Spinach</h4>
             <p class="text-gray-400 text-xs">Mchicha</p>
-            <p class="text-accent-500 font-bold mt-1">KES 60<span class="text-gray-400 font-normal text-xs">/bunch</span></p>
+            <p class="text-brand-600 font-bold mt-1">KES 60<span class="text-gray-400 font-normal text-xs">/bunch</span></p>
           </div>
 
-          <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4 hover:shadow-md hover:border-accent-200 transition text-center">
+          <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4 hover:shadow-md transition text-center">
             <div class="text-3xl mb-2">🥗</div>
-            <h4 class="font-semibold text-navy-800 text-sm">Cabbage</h4>
+            <h4 class="font-semibold text-gray-900 text-sm">Cabbage</h4>
             <p class="text-gray-400 text-xs">Kabichi</p>
-            <p class="text-accent-500 font-bold mt-1">KES 100<span class="text-gray-400 font-normal text-xs">/piece</span></p>
+            <p class="text-brand-600 font-bold mt-1">KES 100<span class="text-gray-400 font-normal text-xs">/piece</span></p>
           </div>
 
-          <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4 hover:shadow-md hover:border-accent-200 transition text-center">
+          <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4 hover:shadow-md transition text-center">
             <div class="text-3xl mb-2">🌿</div>
-            <h4 class="font-semibold text-navy-800 text-sm">Osuga / Managu</h4>
+            <h4 class="font-semibold text-gray-900 text-sm">Osuga / Managu</h4>
             <p class="text-gray-400 text-xs">Traditional greens</p>
-            <p class="text-accent-500 font-bold mt-1">KES 60<span class="text-gray-400 font-normal text-xs">/bundle</span></p>
+            <p class="text-brand-600 font-bold mt-1">KES 60<span class="text-gray-400 font-normal text-xs">/bundle</span></p>
           </div>
 
-          <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4 hover:shadow-md hover:border-accent-200 transition text-center">
+          <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4 hover:shadow-md transition text-center">
             <div class="text-3xl mb-2">🥔</div>
-            <h4 class="font-semibold text-navy-800 text-sm">Irish Potatoes</h4>
+            <h4 class="font-semibold text-gray-900 text-sm">Irish Potatoes</h4>
             <p class="text-gray-400 text-xs">Viazi</p>
-            <p class="text-accent-500 font-bold mt-1">KES 140<span class="text-gray-400 font-normal text-xs">/kg</span></p>
+            <p class="text-brand-600 font-bold mt-1">KES 140<span class="text-gray-400 font-normal text-xs">/kg</span></p>
           </div>
 
-          <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4 hover:shadow-md hover:border-accent-200 transition text-center">
+          <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4 hover:shadow-md transition text-center">
             <div class="text-3xl mb-2">🫑</div>
-            <h4 class="font-semibold text-navy-800 text-sm">Capsicum</h4>
+            <h4 class="font-semibold text-gray-900 text-sm">Capsicum</h4>
             <p class="text-gray-400 text-xs">Pilipili Hoho</p>
-            <p class="text-accent-500 font-bold mt-1">KES 60<span class="text-gray-400 font-normal text-xs">/piece</span></p>
+            <p class="text-brand-600 font-bold mt-1">KES 60<span class="text-gray-400 font-normal text-xs">/piece</span></p>
           </div>
 
-          <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4 hover:shadow-md hover:border-accent-200 transition text-center">
+          <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4 hover:shadow-md transition text-center">
             <div class="text-3xl mb-2">🧅</div>
-            <h4 class="font-semibold text-navy-800 text-sm">White Onions</h4>
+            <h4 class="font-semibold text-gray-900 text-sm">White Onions</h4>
             <p class="text-gray-400 text-xs">Vitunguu Nyeupe</p>
-            <p class="text-accent-500 font-bold mt-1">KES 120<span class="text-gray-400 font-normal text-xs">/kg</span></p>
+            <p class="text-brand-600 font-bold mt-1">KES 120<span class="text-gray-400 font-normal text-xs">/kg</span></p>
           </div>
 
-          <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4 hover:shadow-md hover:border-accent-200 transition text-center">
+          <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4 hover:shadow-md transition text-center">
             <div class="text-3xl mb-2">🧅</div>
-            <h4 class="font-semibold text-navy-800 text-sm">Red Onions</h4>
+            <h4 class="font-semibold text-gray-900 text-sm">Red Onions</h4>
             <p class="text-gray-400 text-xs">Vitunguu Nyekundu</p>
-            <p class="text-accent-500 font-bold mt-1">KES 110<span class="text-gray-400 font-normal text-xs">/kg</span></p>
+            <p class="text-brand-600 font-bold mt-1">KES 110<span class="text-gray-400 font-normal text-xs">/kg</span></p>
           </div>
 
-          <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4 hover:shadow-md hover:border-accent-200 transition text-center">
+          <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4 hover:shadow-md transition text-center">
             <div class="text-3xl mb-2">🍠</div>
-            <h4 class="font-semibold text-navy-800 text-sm">Sweet Potatoes</h4>
+            <h4 class="font-semibold text-gray-900 text-sm">Sweet Potatoes</h4>
             <p class="text-gray-400 text-xs">Viazi Vitamu</p>
-            <p class="text-accent-500 font-bold mt-1">KES 100<span class="text-gray-400 font-normal text-xs">/kg</span></p>
+            <p class="text-brand-600 font-bold mt-1">KES 100<span class="text-gray-400 font-normal text-xs">/kg</span></p>
           </div>
 
-          <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4 hover:shadow-md hover:border-accent-200 transition text-center">
+          <div class="bg-white rounded-lg shadow-sm border border-gray-100 p-4 hover:shadow-md transition text-center">
             <div class="text-3xl mb-2">🍅</div>
-            <h4 class="font-semibold text-navy-800 text-sm">Tomatoes</h4>
+            <h4 class="font-semibold text-gray-900 text-sm">Tomatoes</h4>
             <p class="text-gray-400 text-xs">Nyanya</p>
-            <p class="text-accent-500 font-bold mt-1">KES 120<span class="text-gray-400 font-normal text-xs">/kg</span></p>
+            <p class="text-brand-600 font-bold mt-1">KES 120<span class="text-gray-400 font-normal text-xs">/kg</span></p>
           </div>
 
         </div>
@@ -376,41 +351,41 @@
   <section id="how-it-works" class="py-16 md:py-24 bg-white">
     <div class="max-w-6xl mx-auto px-4">
       <div class="text-center mb-12">
-        <h2 class="text-3xl md:text-4xl font-bold text-navy-800 mb-3">How It Works</h2>
+        <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-3">How It Works</h2>
         <p class="text-gray-500">Three simple steps to fresh food at your door.</p>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
 
         <div class="text-center">
-          <div class="w-16 h-16 bg-navy-50 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg class="w-8 h-8 text-navy-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div class="w-16 h-16 bg-brand-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg class="w-8 h-8 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
             </svg>
           </div>
-          <div class="text-sm font-bold text-accent-500 mb-1">Step 1</div>
-          <h3 class="text-lg font-bold text-navy-800 mb-2">Browse Products</h3>
+          <div class="text-sm font-bold text-brand-600 mb-1">Step 1</div>
+          <h3 class="text-lg font-bold text-gray-900 mb-2">Browse Products</h3>
           <p class="text-gray-500 text-sm">Check our fresh products and prices right here, then decide what you want.</p>
         </div>
 
         <div class="text-center">
-          <div class="w-16 h-16 bg-green-50 rounded-full flex items-center justify-center mx-auto mb-4">
+          <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
             <svg class="w-8 h-8 text-whatsapp" fill="currentColor" viewBox="0 0 24 24">
               <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
             </svg>
           </div>
-          <div class="text-sm font-bold text-accent-500 mb-1">Step 2</div>
-          <h3 class="text-lg font-bold text-navy-800 mb-2">Order on WhatsApp</h3>
+          <div class="text-sm font-bold text-brand-600 mb-1">Step 2</div>
+          <h3 class="text-lg font-bold text-gray-900 mb-2">Order on WhatsApp</h3>
           <p class="text-gray-500 text-sm">Send us your order on WhatsApp. We'll confirm availability and delivery details.</p>
         </div>
 
         <div class="text-center">
-          <div class="w-16 h-16 bg-accent-50 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg class="w-8 h-8 text-accent-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <div class="w-16 h-16 bg-brand-100 rounded-full flex items-center justify-center mx-auto mb-4">
+            <svg class="w-8 h-8 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/>
             </svg>
           </div>
-          <div class="text-sm font-bold text-accent-500 mb-1">Step 3</div>
-          <h3 class="text-lg font-bold text-navy-800 mb-2">Delivered Fresh</h3>
+          <div class="text-sm font-bold text-brand-600 mb-1">Step 3</div>
+          <h3 class="text-lg font-bold text-gray-900 mb-2">Delivered Fresh</h3>
           <p class="text-gray-500 text-sm">We harvest fresh the morning of delivery and bring it straight to your door. Pay with M-PESA.</p>
         </div>
 
@@ -420,52 +395,52 @@
 
 
   <!-- ==================== FRESHNESS PROMISE ==================== -->
-  <section id="freshness" class="py-16 md:py-24 bg-navy-800 text-white">
+  <section id="freshness" class="py-16 md:py-24 bg-brand-700 text-white">
     <div class="max-w-6xl mx-auto px-4">
       <div class="text-center mb-12">
         <h2 class="text-3xl md:text-4xl font-bold mb-3">Why AllivanFresh?</h2>
-        <p class="text-navy-300 max-w-xl mx-auto">We do things differently. No middlemen, no cold storage — just fresh food from source to your table.</p>
+        <p class="text-brand-200 max-w-xl mx-auto">We do things differently. No middlemen, no cold storage — just fresh food from source to your table.</p>
       </div>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
 
-        <div class="bg-white/5 border border-white/10 rounded-xl p-6">
-          <div class="w-12 h-12 bg-accent-500/20 rounded-lg flex items-center justify-center mb-4">
-            <svg class="w-6 h-6 text-accent-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="bg-white/10 rounded-xl p-6 backdrop-blur-sm">
+          <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center mb-4">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
             </svg>
           </div>
           <h3 class="font-bold text-lg mb-2">Same-Day Harvest</h3>
-          <p class="text-navy-300 text-sm">Everything is sourced the same morning we deliver. You get it at peak freshness.</p>
+          <p class="text-brand-200 text-sm">Everything is sourced the same morning we deliver. You get it at peak freshness.</p>
         </div>
 
-        <div class="bg-white/5 border border-white/10 rounded-xl p-6">
-          <div class="w-12 h-12 bg-accent-500/20 rounded-lg flex items-center justify-center mb-4">
-            <svg class="w-6 h-6 text-accent-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 18.364A9 9 0 005.636 5.636m12.728 12.728A9 9 0 015.636 5.636m12.728 12.728L5.636 5.636"/>
+        <div class="bg-white/10 rounded-xl p-6 backdrop-blur-sm">
+          <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center mb-4">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
             </svg>
           </div>
           <h3 class="font-bold text-lg mb-2">No Refrigeration</h3>
-          <p class="text-navy-300 text-sm">Our food is so fresh, we don't need to refrigerate it. From the farm to you, same day.</p>
+          <p class="text-brand-200 text-sm">Our food is so fresh, we don't need to refrigerate it. From the farm to you, same day.</p>
         </div>
 
-        <div class="bg-white/5 border border-white/10 rounded-xl p-6">
-          <div class="w-12 h-12 bg-accent-500/20 rounded-lg flex items-center justify-center mb-4">
-            <svg class="w-6 h-6 text-accent-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="bg-white/10 rounded-xl p-6 backdrop-blur-sm">
+          <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center mb-4">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"/>
             </svg>
           </div>
           <h3 class="font-bold text-lg mb-2">Free Delivery</h3>
-          <p class="text-navy-300 text-sm">Order fish or chicken and get FREE delivery within Kisumu town. No hidden charges.</p>
+          <p class="text-brand-200 text-sm">Order fish or chicken and get FREE delivery within Kisumu town. No hidden charges.</p>
         </div>
 
-        <div class="bg-white/5 border border-white/10 rounded-xl p-6">
-          <div class="w-12 h-12 bg-accent-500/20 rounded-lg flex items-center justify-center mb-4">
-            <svg class="w-6 h-6 text-accent-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="bg-white/10 rounded-xl p-6 backdrop-blur-sm">
+          <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center mb-4">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
             </svg>
           </div>
           <h3 class="font-bold text-lg mb-2">Quality Guarantee</h3>
-          <p class="text-navy-300 text-sm">Not fresh? We replace it free on your next delivery. No questions asked.</p>
+          <p class="text-brand-200 text-sm">Not fresh? We replace it free on your next delivery. No questions asked.</p>
         </div>
 
       </div>
@@ -477,14 +452,14 @@
   <section id="faq" class="py-16 md:py-24 bg-gray-50">
     <div class="max-w-3xl mx-auto px-4">
       <div class="text-center mb-12">
-        <h2 class="text-3xl md:text-4xl font-bold text-navy-800 mb-3">Frequently Asked Questions</h2>
+        <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-3">Frequently Asked Questions</h2>
       </div>
 
       <div class="space-y-3">
 
         <div class="bg-white rounded-xl shadow-sm border border-gray-100">
           <button class="faq-toggle w-full text-left px-6 py-4 flex justify-between items-center" aria-expanded="false">
-            <span class="font-semibold text-navy-800">What areas do you deliver to?</span>
+            <span class="font-semibold text-gray-900">What areas do you deliver to?</span>
             <svg class="faq-chevron w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
             </svg>
@@ -496,7 +471,7 @@
 
         <div class="bg-white rounded-xl shadow-sm border border-gray-100">
           <button class="faq-toggle w-full text-left px-6 py-4 flex justify-between items-center" aria-expanded="false">
-            <span class="font-semibold text-navy-800">How does delivery pricing work?</span>
+            <span class="font-semibold text-gray-900">How does delivery pricing work?</span>
             <svg class="faq-chevron w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
             </svg>
@@ -508,7 +483,7 @@
 
         <div class="bg-white rounded-xl shadow-sm border border-gray-100">
           <button class="faq-toggle w-full text-left px-6 py-4 flex justify-between items-center" aria-expanded="false">
-            <span class="font-semibold text-navy-800">What payment methods do you accept?</span>
+            <span class="font-semibold text-gray-900">What payment methods do you accept?</span>
             <svg class="faq-chevron w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
             </svg>
@@ -520,7 +495,7 @@
 
         <div class="bg-white rounded-xl shadow-sm border border-gray-100">
           <button class="faq-toggle w-full text-left px-6 py-4 flex justify-between items-center" aria-expanded="false">
-            <span class="font-semibold text-navy-800">When will my order arrive?</span>
+            <span class="font-semibold text-gray-900">When will my order arrive?</span>
             <svg class="faq-chevron w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
             </svg>
@@ -532,7 +507,7 @@
 
         <div class="bg-white rounded-xl shadow-sm border border-gray-100">
           <button class="faq-toggle w-full text-left px-6 py-4 flex justify-between items-center" aria-expanded="false">
-            <span class="font-semibold text-navy-800">Can I order vegetables only?</span>
+            <span class="font-semibold text-gray-900">Can I order vegetables only?</span>
             <svg class="faq-chevron w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
             </svg>
@@ -544,7 +519,7 @@
 
         <div class="bg-white rounded-xl shadow-sm border border-gray-100">
           <button class="faq-toggle w-full text-left px-6 py-4 flex justify-between items-center" aria-expanded="false">
-            <span class="font-semibold text-navy-800">How do I place an order?</span>
+            <span class="font-semibold text-gray-900">How do I place an order?</span>
             <svg class="faq-chevron w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"/>
             </svg>
@@ -560,36 +535,36 @@
 
 
   <!-- ==================== FOOTER ==================== -->
-  <footer class="bg-navy-900 text-white py-12">
+  <footer class="bg-brand-800 text-white py-12">
     <div class="max-w-6xl mx-auto px-4">
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
 
         <div>
-          <img src="images/logo.png" alt="AllivanFresh" class="h-14 w-auto mb-4">
-          <p class="text-navy-300 text-sm leading-relaxed">Premium fresh chicken, fish & vegetables delivered in Kisumu. Harvested the same day we deliver.</p>
+          <img src="images/logo.png" alt="AllivanFresh" class="h-16 w-auto mb-4">
+          <p class="text-brand-200 text-sm leading-relaxed">Premium fresh chicken, fish & vegetables delivered in Kisumu. Harvested the same day we deliver.</p>
         </div>
 
         <div>
           <h4 class="font-semibold mb-3">Quick Links</h4>
-          <ul class="space-y-2 text-navy-300 text-sm">
-            <li><a href="#products" class="hover:text-accent-400 transition">Our Products</a></li>
-            <li><a href="#how-it-works" class="hover:text-accent-400 transition">How It Works</a></li>
-            <li><a href="#freshness" class="hover:text-accent-400 transition">Why AllivanFresh</a></li>
-            <li><a href="#faq" class="hover:text-accent-400 transition">FAQ</a></li>
+          <ul class="space-y-2 text-brand-200 text-sm">
+            <li><a href="#products" class="hover:text-white transition">Our Products</a></li>
+            <li><a href="#how-it-works" class="hover:text-white transition">How It Works</a></li>
+            <li><a href="#freshness" class="hover:text-white transition">Why AllivanFresh</a></li>
+            <li><a href="#faq" class="hover:text-white transition">FAQ</a></li>
           </ul>
         </div>
 
         <div>
           <h4 class="font-semibold mb-3">Contact Us</h4>
-          <ul class="space-y-2 text-navy-300 text-sm">
+          <ul class="space-y-2 text-brand-200 text-sm">
             <li>
-              <a id="footer-wa" href="#" class="hover:text-whatsapp transition flex items-center gap-2">
+              <a id="footer-wa" href="#" class="hover:text-white transition flex items-center gap-2">
                 <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
                 WhatsApp Us
               </a>
             </li>
             <li>
-              <a href="mailto:allivanfresh@gmail.com" class="hover:text-accent-400 transition flex items-center gap-2">
+              <a href="mailto:allivanfresh@gmail.com" class="hover:text-white transition flex items-center gap-2">
                 <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
                 allivanfresh@gmail.com
               </a>
@@ -603,7 +578,7 @@
 
       </div>
 
-      <div class="border-t border-navy-700 mt-8 pt-8 text-center text-navy-400 text-sm">
+      <div class="border-t border-brand-700 mt-8 pt-8 text-center text-brand-300 text-sm">
         <p>&copy; 2025 AllivanFresh. All rights reserved. Prices subject to change — confirm on WhatsApp.</p>
       </div>
     </div>
@@ -695,25 +670,11 @@
       });
     }
 
-    // ========== Navbar scroll effect ==========
-    function initNavScroll() {
-      var navbar = document.getElementById('navbar');
-      if (!navbar) return;
-      window.addEventListener('scroll', function() {
-        if (window.scrollY > 50) {
-          navbar.classList.add('nav-scrolled');
-        } else {
-          navbar.classList.remove('nav-scrolled');
-        }
-      });
-    }
-
     // ========== Initialize ==========
     document.addEventListener('DOMContentLoaded', function() {
       initWhatsAppLinks();
       initMobileMenu();
       initFAQ();
-      initNavScroll();
     });
   </script>
 
