@@ -55,15 +55,30 @@ export class WhatsAppService {
   }
 
   /**
+   * Optimize Cloudinary image URL for WhatsApp
+   * Converts to JPEG format at 800px width for best WhatsApp compatibility
+   */
+  private optimizeImageUrl(url: string): string {
+    if (!url.includes('res.cloudinary.com')) return url;
+
+    // Insert Cloudinary transforms: width 800, quality auto, JPEG format
+    return url.replace(
+      '/image/upload/',
+      '/image/upload/w_800,q_auto,f_jpg/'
+    );
+  }
+
+  /**
    * Send an image message via wasenderapi
    */
   async sendImage(to: string, imageUrl: string, caption?: string): Promise<WhatsAppApiResponse> {
     try {
       const cleanPhone = to.replace(/@.*$/, '');
+      const optimizedUrl = this.optimizeImageUrl(imageUrl);
 
       const payload: any = {
         to: cleanPhone,
-        imageUrl: imageUrl,
+        imageUrl: optimizedUrl,
       };
       if (caption) {
         payload.text = caption;
