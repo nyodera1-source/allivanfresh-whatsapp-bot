@@ -17,7 +17,7 @@
   <meta property="og:image" content="images/logo.png">
 
   <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdn.tailwindcss.com?v=2"></script>
   <script>
     tailwind.config = {
       theme: {
@@ -36,6 +36,11 @@
               900: '#052e16',
             },
             whatsapp: '#25D366',
+            accent: {
+              500: '#f97316',
+              600: '#ea580c',
+              700: '#c2410c',
+            },
           }
         }
       }
@@ -60,13 +65,19 @@
   }
   </script>
 
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+
   <style>
+    * { font-family: 'Inter', sans-serif; }
     html { scroll-behavior: smooth; }
 
     /* Floating WhatsApp button pulse */
     @keyframes pulse-ring {
       0% { transform: scale(1); opacity: 1; }
-      80%, 100% { transform: scale(1.4); opacity: 0; }
+      80%, 100% { transform: scale(1.5); opacity: 0; }
     }
     .whatsapp-float::before {
       content: '';
@@ -83,25 +94,84 @@
     .faq-answer.open { max-height: 200px; }
     .faq-chevron { transition: transform 0.3s ease; }
     .faq-chevron.open { transform: rotate(180deg); }
+
+    /* Product card hover */
+    .product-card { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+    .product-card:hover { transform: translateY(-6px); box-shadow: 0 20px 40px rgba(0,0,0,0.1); }
+    .product-card .product-img { transition: transform 0.4s ease; }
+    .product-card:hover .product-img { transform: scale(1.05); }
+
+    /* Veggie card hover */
+    .veggie-card { transition: transform 0.3s ease, box-shadow 0.3s ease; }
+    .veggie-card:hover { transform: translateY(-4px); box-shadow: 0 12px 24px rgba(0,0,0,0.08); }
+
+    /* Badge pulse */
+    @keyframes badge-pulse {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.7; }
+    }
+    .badge-pulse { animation: badge-pulse 2s ease-in-out infinite; }
+
+    /* Category pill */
+    .cat-pill { transition: all 0.3s ease; }
+    .cat-pill:hover, .cat-pill.active { background: #2d6a4f; color: white; transform: scale(1.05); }
+
+    /* Stats counter animation */
+    @keyframes fadeInUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .fade-in-up { animation: fadeInUp 0.6s ease forwards; }
+
+    /* Promo banner shimmer */
+    @keyframes shimmer {
+      0% { background-position: -200% center; }
+      100% { background-position: 200% center; }
+    }
+    .shimmer-text {
+      background: linear-gradient(90deg, #fff 0%, #fef08a 50%, #fff 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: shimmer 3s linear infinite;
+    }
+
+    /* Hero floating animation */
+    @keyframes float {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-12px); }
+    }
+    .hero-float { animation: float 4s ease-in-out infinite; }
+
+    /* Testimonial card */
+    .testimonial-card { transition: transform 0.3s ease; }
+    .testimonial-card:hover { transform: scale(1.02); }
+
+    /* Scroll reveal */
+    .reveal { opacity: 0; transform: translateY(30px); transition: opacity 0.6s ease, transform 0.6s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
   </style>
 </head>
 
 <body class="bg-white text-gray-800">
 
   <!-- ==================== NAVIGATION ==================== -->
-  <nav class="fixed top-0 w-full bg-white/95 backdrop-blur-sm shadow-sm z-50">
+  <nav class="fixed top-0 w-full bg-white/95 backdrop-blur-md shadow-sm z-50">
     <div class="max-w-6xl mx-auto px-4 py-2 flex items-center justify-between">
       <a href="#">
-        <img src="images/logo.png" alt="AllivanFresh" class="h-24 md:h-32 w-auto">
+        <img src="images/logo.png" alt="AllivanFresh" class="h-20 md:h-24 w-auto">
       </a>
 
       <!-- Desktop nav -->
-      <div class="hidden md:flex items-center gap-6">
-        <a href="#products" class="text-gray-600 hover:text-brand-600 transition">Products</a>
-        <a href="#how-it-works" class="text-gray-600 hover:text-brand-600 transition">How It Works</a>
-        <a href="#freshness" class="text-gray-600 hover:text-brand-600 transition">Why Us</a>
-        <a href="#faq" class="text-gray-600 hover:text-brand-600 transition">FAQ</a>
-        <a id="nav-cta" href="#" class="bg-whatsapp text-white px-4 py-2 rounded-full font-semibold hover:bg-green-600 transition text-sm">Order on WhatsApp</a>
+      <div class="hidden md:flex items-center gap-8">
+        <a href="#products" class="text-gray-600 hover:text-brand-600 transition font-medium text-sm">Products</a>
+        <a href="#how-it-works" class="text-gray-600 hover:text-brand-600 transition font-medium text-sm">How It Works</a>
+        <a href="#freshness" class="text-gray-600 hover:text-brand-600 transition font-medium text-sm">Why Us</a>
+        <a href="#testimonials" class="text-gray-600 hover:text-brand-600 transition font-medium text-sm">Reviews</a>
+        <a href="#faq" class="text-gray-600 hover:text-brand-600 transition font-medium text-sm">FAQ</a>
+        <a id="nav-cta" href="#" class="bg-accent-500 text-white px-5 py-2.5 rounded-full font-semibold hover:bg-accent-600 transition text-sm shadow-md hover:shadow-lg">
+          Order on WhatsApp
+        </a>
       </div>
 
       <!-- Mobile menu button -->
@@ -115,35 +185,95 @@
     <!-- Mobile menu -->
     <div id="mobile-menu" class="hidden md:hidden border-t bg-white">
       <div class="px-4 py-3 flex flex-col gap-3">
-        <a href="#products" class="text-gray-600 hover:text-brand-600 py-1 mobile-link">Products</a>
-        <a href="#how-it-works" class="text-gray-600 hover:text-brand-600 py-1 mobile-link">How It Works</a>
-        <a href="#freshness" class="text-gray-600 hover:text-brand-600 py-1 mobile-link">Why Us</a>
-        <a href="#faq" class="text-gray-600 hover:text-brand-600 py-1 mobile-link">FAQ</a>
-        <a id="mobile-cta" href="#" class="bg-whatsapp text-white px-4 py-2 rounded-full font-semibold text-center hover:bg-green-600 transition text-sm">Order on WhatsApp</a>
+        <a href="#products" class="text-gray-600 hover:text-brand-600 py-1 mobile-link font-medium">Products</a>
+        <a href="#how-it-works" class="text-gray-600 hover:text-brand-600 py-1 mobile-link font-medium">How It Works</a>
+        <a href="#freshness" class="text-gray-600 hover:text-brand-600 py-1 mobile-link font-medium">Why Us</a>
+        <a href="#testimonials" class="text-gray-600 hover:text-brand-600 py-1 mobile-link font-medium">Reviews</a>
+        <a href="#faq" class="text-gray-600 hover:text-brand-600 py-1 mobile-link font-medium">FAQ</a>
+        <a id="mobile-cta" href="#" class="bg-accent-500 text-white px-4 py-2 rounded-full font-semibold text-center hover:bg-accent-600 transition text-sm">Order on WhatsApp</a>
       </div>
     </div>
   </nav>
 
 
   <!-- ==================== HERO ==================== -->
-  <section class="min-h-screen flex items-center bg-gradient-to-br from-brand-700 via-brand-600 to-brand-500 text-white pt-16">
-    <div class="max-w-6xl mx-auto px-4 py-16 md:py-24">
-      <div class="max-w-2xl">
-        <h1 class="text-4xl md:text-5xl lg:text-6xl font-bold leading-tight mb-6">
-          Fresh from the farm to your door
-        </h1>
-        <p class="text-lg md:text-xl text-brand-100 mb-8 leading-relaxed">
-          Premium chicken, fish & vegetables. Harvested the same day we deliver. No refrigeration — just real freshness. Serving Kisumu and beyond.
-        </p>
-        <div class="flex flex-col sm:flex-row gap-4">
-          <a id="hero-cta" href="#" class="bg-whatsapp hover:bg-green-400 text-white px-8 py-4 rounded-full font-bold text-lg text-center transition shadow-lg">
-            Order on WhatsApp
-          </a>
-          <a href="#products" class="border-2 border-white/50 hover:border-white text-white px-8 py-4 rounded-full font-semibold text-lg text-center transition">
-            View Products
-          </a>
+  <section class="min-h-screen flex items-center bg-gradient-to-br from-brand-700 via-brand-600 to-brand-500 text-white pt-20 overflow-hidden">
+    <div class="max-w-6xl mx-auto px-4 py-12 md:py-20">
+      <div class="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+        <!-- Left: Text -->
+        <div>
+          <span class="inline-block bg-white/20 backdrop-blur-sm text-white text-sm font-semibold px-4 py-1.5 rounded-full mb-6">
+            Serving Kisumu & Beyond
+          </span>
+          <h1 class="text-4xl md:text-5xl lg:text-6xl font-extrabold leading-tight mb-6">
+            Fresh from the
+            <span class="text-yellow-300">farm</span>
+            to your door
+          </h1>
+          <p class="text-lg md:text-xl text-brand-100 mb-8 leading-relaxed">
+            Premium chicken, fish & vegetables. Harvested the same day we deliver. No refrigeration — just real freshness.
+          </p>
+          <div class="flex flex-col sm:flex-row gap-4 mb-8">
+            <a id="hero-cta" href="#" class="bg-accent-500 hover:bg-accent-600 text-white px-8 py-4 rounded-full font-bold text-lg text-center transition shadow-lg hover:shadow-xl flex items-center justify-center gap-2">
+              <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+              Order on WhatsApp
+            </a>
+            <a href="#products" class="border-2 border-white/40 hover:border-white hover:bg-white/10 text-white px-8 py-4 rounded-full font-semibold text-lg text-center transition">
+              View Products
+            </a>
+          </div>
+          <div class="flex items-center gap-6 text-sm text-brand-200">
+            <div class="flex items-center gap-2">
+              <svg class="w-5 h-5 text-yellow-300" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+              Same-Day Harvest
+            </div>
+            <div class="flex items-center gap-2">
+              <svg class="w-5 h-5 text-yellow-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/></svg>
+              Free Delivery
+            </div>
+            <div class="flex items-center gap-2">
+              <svg class="w-5 h-5 text-yellow-300" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"/></svg>
+              M-PESA
+            </div>
+          </div>
         </div>
-        <p class="mt-6 text-brand-200 text-sm">Order today. We harvest fresh tomorrow morning and deliver to you.</p>
+
+        <!-- Right: Hero image -->
+        <div class="hidden md:block relative">
+          <div class="hero-float">
+            <div class="relative">
+              <div class="absolute -top-4 -left-4 w-72 h-72 bg-yellow-300/20 rounded-full blur-3xl"></div>
+              <div class="absolute -bottom-4 -right-4 w-60 h-60 bg-white/10 rounded-full blur-2xl"></div>
+              <!-- Replace src with your own hero image -->
+              <img src="images/hero.png" alt="Fresh food delivery — chicken, fish and vegetables" class="relative z-10 w-full max-w-md mx-auto drop-shadow-2xl rounded-2xl">
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ==================== SOCIAL PROOF STATS ==================== -->
+  <section class="bg-brand-800 py-6">
+    <div class="max-w-6xl mx-auto px-4">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center text-white">
+        <div class="fade-in-up">
+          <div class="text-2xl md:text-3xl font-extrabold text-yellow-300">500+</div>
+          <div class="text-brand-200 text-sm mt-1">Orders Delivered</div>
+        </div>
+        <div class="fade-in-up" style="animation-delay: 0.1s">
+          <div class="text-2xl md:text-3xl font-extrabold text-yellow-300">4.9</div>
+          <div class="text-brand-200 text-sm mt-1">Customer Rating</div>
+        </div>
+        <div class="fade-in-up" style="animation-delay: 0.2s">
+          <div class="text-2xl md:text-3xl font-extrabold text-yellow-300">14+</div>
+          <div class="text-brand-200 text-sm mt-1">Fresh Products</div>
+        </div>
+        <div class="fade-in-up" style="animation-delay: 0.3s">
+          <div class="text-2xl md:text-3xl font-extrabold text-yellow-300">0 Days</div>
+          <div class="text-brand-200 text-sm mt-1">Cold Storage</div>
+        </div>
       </div>
     </div>
   </section>
@@ -152,48 +282,79 @@
   <!-- ==================== PRODUCTS ==================== -->
   <section id="products" class="py-16 md:py-24 bg-gray-50">
     <div class="max-w-6xl mx-auto px-4">
-      <div class="text-center mb-12">
-        <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-3">Our Fresh Products</h2>
+      <div class="text-center mb-8 reveal">
+        <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 mb-3">Our Fresh Products</h2>
         <p class="text-gray-500 max-w-xl mx-auto">Everything sourced fresh on the morning of delivery. No cold storage, no preservatives.</p>
       </div>
 
+      <!-- Category Pills -->
+      <div class="flex flex-wrap justify-center gap-3 mb-12 reveal">
+        <button onclick="filterCategory('all')" class="cat-pill active bg-brand-600 text-white px-6 py-2.5 rounded-full font-semibold text-sm border-2 border-brand-600 flex items-center gap-2" data-cat="all">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"/></svg>
+          All Products
+        </button>
+        <button onclick="filterCategory('fish')" class="cat-pill bg-white text-gray-700 px-6 py-2.5 rounded-full font-semibold text-sm border-2 border-gray-200 flex items-center gap-2" data-cat="fish">
+          <svg class="w-4 h-4" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20 12c-1.5 2-4.5 4-8 4s-6.5-2-8-4c1.5-2 4.5-4 8-4s6.5 2 8 4z"/></svg>
+          Fish
+        </button>
+        <button onclick="filterCategory('chicken')" class="cat-pill bg-white text-gray-700 px-6 py-2.5 rounded-full font-semibold text-sm border-2 border-gray-200 flex items-center gap-2" data-cat="chicken">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6"/></svg>
+          Chicken
+        </button>
+        <button onclick="filterCategory('vegetables')" class="cat-pill bg-white text-gray-700 px-6 py-2.5 rounded-full font-semibold text-sm border-2 border-gray-200 flex items-center gap-2" data-cat="vegetables">
+          <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 3v4M3 5h4M6 17v4m-2-2h4m5-16l2.286 6.857L21 12l-5.714 2.143L13 21l-2.286-6.857L5 12l5.714-2.143L13 3z"/></svg>
+          Vegetables
+        </button>
+      </div>
+
       <!-- Fish -->
-      <div class="mb-12">
-        <div class="flex items-center gap-3 mb-6">
+      <div class="mb-12 category-section" data-category="fish">
+        <div class="flex items-center gap-3 mb-6 reveal">
           <h3 class="text-2xl font-bold text-brand-700">Fresh Fish</h3>
-          <span class="bg-brand-500 text-white text-xs font-bold px-3 py-1 rounded-full">FREE DELIVERY</span>
+          <span class="bg-brand-500 text-white text-xs font-bold px-3 py-1 rounded-full badge-pulse">FREE DELIVERY</span>
         </div>
-        <p class="text-gray-500 mb-4">Lake fresh fish from Lake Victoria, cleaned and ready to cook.</p>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+        <p class="text-gray-500 mb-6 reveal">Lake fresh fish from Lake Victoria, cleaned and ready to cook.</p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+
           <!-- Tilapia -->
-          <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition">
-            <div class="h-52 bg-white flex items-center justify-center p-2">
-              <img src="https://res.cloudinary.com/doja7sbeg/image/upload/w_400,q_auto,f_jpg/v1770490426/allivanfresh-products/jirijgfcqj2zkdecf3ls.avif" alt="Tilapia" class="max-w-full max-h-full object-contain rounded">
+          <div class="product-card bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden relative">
+            <div class="absolute top-3 left-3 z-10 flex gap-2">
+              <span class="bg-brand-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow">POPULAR</span>
+              <span class="bg-orange-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow">FREE DELIVERY</span>
             </div>
-            <div class="p-4">
+            <div class="h-44 bg-gradient-to-b from-gray-50 to-white flex items-center justify-center p-3 overflow-hidden">
+              <img src="https://res.cloudinary.com/doja7sbeg/image/upload/w_400,q_auto,f_jpg/v1770490426/allivanfresh-products/jirijgfcqj2zkdecf3ls.avif" alt="Tilapia" class="product-img max-w-full max-h-full object-contain">
+            </div>
+            <div class="p-5">
               <div class="flex justify-between items-start mb-1">
-                <h4 class="font-bold text-gray-900">Tilapia (Medium)</h4>
-                <span class="text-brand-600 font-bold">KES 600</span>
+                <h4 class="font-bold text-gray-900 text-lg">Tilapia (Medium)</h4>
+                <span class="text-brand-600 font-extrabold text-xl">KES 600</span>
               </div>
-              <p class="text-gray-400 text-sm mb-3">Samaki Tilapia &middot; per kg</p>
-              <button onclick="orderProduct('Tilapia', '1kg')" class="w-full bg-whatsapp text-white py-2 rounded-lg font-semibold hover:bg-green-600 transition text-sm">
+              <p class="text-gray-400 text-sm mb-4">Samaki Tilapia &middot; per kg</p>
+              <button onclick="orderProduct('Tilapia', '1kg')" class="w-full bg-accent-500 text-white py-3 rounded-xl font-semibold hover:bg-accent-600 transition text-sm flex items-center justify-center gap-2 shadow-sm hover:shadow-md">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
                 Order on WhatsApp
               </button>
             </div>
           </div>
 
           <!-- Nile Perch -->
-          <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition">
-            <div class="h-52 bg-white flex items-center justify-center p-2">
-              <img src="https://res.cloudinary.com/doja7sbeg/image/upload/w_400,q_auto,f_jpg/v1770466495/allivanfresh-products/m7qfuy7emypqyenm6kmk.avif" alt="Nile Perch" class="max-w-full max-h-full object-contain rounded">
+          <div class="product-card bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden relative">
+            <div class="absolute top-3 left-3 z-10 flex gap-2">
+              <span class="bg-blue-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow">PREMIUM</span>
+              <span class="bg-orange-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow">FREE DELIVERY</span>
             </div>
-            <div class="p-4">
+            <div class="h-44 bg-gradient-to-b from-gray-50 to-white flex items-center justify-center p-3 overflow-hidden">
+              <img src="https://res.cloudinary.com/doja7sbeg/image/upload/w_400,q_auto,f_jpg/v1770466495/allivanfresh-products/m7qfuy7emypqyenm6kmk.avif" alt="Nile Perch" class="product-img max-w-full max-h-full object-contain">
+            </div>
+            <div class="p-5">
               <div class="flex justify-between items-start mb-1">
-                <h4 class="font-bold text-gray-900">Nile Perch</h4>
-                <span class="text-brand-600 font-bold">KES 900</span>
+                <h4 class="font-bold text-gray-900 text-lg">Nile Perch</h4>
+                <span class="text-brand-600 font-extrabold text-xl">KES 900</span>
               </div>
-              <p class="text-gray-400 text-sm mb-3">Sangara &middot; per kg</p>
-              <button onclick="orderProduct('Nile Perch', '1kg')" class="w-full bg-whatsapp text-white py-2 rounded-lg font-semibold hover:bg-green-600 transition text-sm">
+              <p class="text-gray-400 text-sm mb-4">Sangara &middot; per kg</p>
+              <button onclick="orderProduct('Nile Perch', '1kg')" class="w-full bg-accent-500 text-white py-3 rounded-xl font-semibold hover:bg-accent-600 transition text-sm flex items-center justify-center gap-2 shadow-sm hover:shadow-md">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
                 Order on WhatsApp
               </button>
             </div>
@@ -201,43 +362,74 @@
         </div>
       </div>
 
-      <!-- Chicken -->
-      <div class="mb-12">
-        <div class="flex items-center gap-3 mb-6">
-          <h3 class="text-2xl font-bold text-brand-700">Fresh Chicken</h3>
-          <span class="bg-brand-500 text-white text-xs font-bold px-3 py-1 rounded-full">FREE DELIVERY</span>
-        </div>
-        <p class="text-gray-500 mb-4">Freshly sourced chicken, hygienically handled. Free-range kienyeji and farm-raised broiler.</p>
-        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
-          <!-- Kienyeji -->
-          <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition">
-            <div class="h-52 bg-white flex items-center justify-center p-2">
-              <img src="https://res.cloudinary.com/doja7sbeg/image/upload/w_400,q_auto,f_jpg/v1770466517/allivanfresh-products/quofj37f9haydiy6n7bz.avif" alt="Kienyeji Chicken" class="max-w-full max-h-full object-contain rounded">
+
+      <!-- ===== PROMO BANNER ===== -->
+      <div class="mb-12 reveal">
+        <div class="bg-gradient-to-r from-brand-700 via-brand-600 to-emerald-500 rounded-2xl p-8 md:p-10 text-white relative overflow-hidden">
+          <div class="absolute top-0 right-0 w-64 h-64 bg-white/5 rounded-full -mr-20 -mt-20"></div>
+          <div class="absolute bottom-0 left-0 w-40 h-40 bg-white/5 rounded-full -ml-10 -mb-10"></div>
+          <div class="relative z-10 flex flex-col md:flex-row items-center justify-between gap-6">
+            <div>
+              <span class="inline-block bg-yellow-400 text-brand-800 text-xs font-extrabold px-3 py-1 rounded-full mb-3">SPECIAL OFFER</span>
+              <h3 class="text-2xl md:text-3xl font-extrabold mb-2">Order Fish or Chicken</h3>
+              <p class="text-brand-100 text-lg">Get <span class="text-yellow-300 font-bold">FREE delivery</span> + add veggies at no extra delivery cost!</p>
             </div>
-            <div class="p-4">
+            <a id="promo-cta" href="#" class="bg-accent-500 text-white px-8 py-4 rounded-full font-bold text-lg hover:bg-accent-600 transition shadow-lg flex-shrink-0">
+              Order Now
+            </a>
+          </div>
+        </div>
+      </div>
+
+
+      <!-- Chicken -->
+      <div class="mb-12 category-section" data-category="chicken">
+        <div class="flex items-center gap-3 mb-6 reveal">
+          <h3 class="text-2xl font-bold text-brand-700">Fresh Chicken</h3>
+          <span class="bg-brand-500 text-white text-xs font-bold px-3 py-1 rounded-full badge-pulse">FREE DELIVERY</span>
+        </div>
+        <p class="text-gray-500 mb-6 reveal">Freshly sourced chicken, hygienically handled. Free-range kienyeji and farm-raised broiler.</p>
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-6">
+
+          <!-- Kienyeji -->
+          <div class="product-card bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden relative">
+            <div class="absolute top-3 left-3 z-10 flex gap-2">
+              <span class="bg-yellow-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow">BEST SELLER</span>
+              <span class="bg-orange-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow">FREE DELIVERY</span>
+            </div>
+            <div class="h-44 bg-gradient-to-b from-gray-50 to-white flex items-center justify-center p-3 overflow-hidden">
+              <img src="https://res.cloudinary.com/doja7sbeg/image/upload/w_400,q_auto,f_jpg/v1770466517/allivanfresh-products/quofj37f9haydiy6n7bz.avif" alt="Kienyeji Chicken" class="product-img max-w-full max-h-full object-contain">
+            </div>
+            <div class="p-5">
               <div class="flex justify-between items-start mb-1">
-                <h4 class="font-bold text-gray-900">Kienyeji Chicken</h4>
-                <span class="text-brand-600 font-bold">KES 1,200</span>
+                <h4 class="font-bold text-gray-900 text-lg">Kienyeji Chicken</h4>
+                <span class="text-brand-600 font-extrabold text-xl">KES 1,200</span>
               </div>
-              <p class="text-gray-400 text-sm mb-3">Kuku Kienyeji &middot; per piece (~1.5kg)</p>
-              <button onclick="orderProduct('Kienyeji Chicken', '1 piece')" class="w-full bg-whatsapp text-white py-2 rounded-lg font-semibold hover:bg-green-600 transition text-sm">
+              <p class="text-gray-400 text-sm mb-4">Kuku Kienyeji &middot; per piece (~1.5kg)</p>
+              <button onclick="orderProduct('Kienyeji Chicken', '1 piece')" class="w-full bg-accent-500 text-white py-3 rounded-xl font-semibold hover:bg-accent-600 transition text-sm flex items-center justify-center gap-2 shadow-sm hover:shadow-md">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
                 Order on WhatsApp
               </button>
             </div>
           </div>
 
           <!-- Broiler -->
-          <div class="bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition">
-            <div class="h-52 bg-white flex items-center justify-center p-2">
-              <img src="https://res.cloudinary.com/doja7sbeg/image/upload/w_400,q_auto,f_jpg/v1770466532/allivanfresh-products/jqipo9xah7wjdqhrqwds.jpg" alt="Broiler Chicken" class="max-w-full max-h-full object-contain rounded">
+          <div class="product-card bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden relative">
+            <div class="absolute top-3 left-3 z-10 flex gap-2">
+              <span class="bg-red-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow">VALUE PICK</span>
+              <span class="bg-orange-500 text-white text-xs font-bold px-3 py-1 rounded-full shadow">FREE DELIVERY</span>
             </div>
-            <div class="p-4">
+            <div class="h-44 bg-gradient-to-b from-gray-50 to-white flex items-center justify-center p-3 overflow-hidden">
+              <img src="https://res.cloudinary.com/doja7sbeg/image/upload/w_400,q_auto,f_jpg/v1770466532/allivanfresh-products/jqipo9xah7wjdqhrqwds.jpg" alt="Broiler Chicken" class="product-img max-w-full max-h-full object-contain">
+            </div>
+            <div class="p-5">
               <div class="flex justify-between items-start mb-1">
-                <h4 class="font-bold text-gray-900">Broiler Chicken</h4>
-                <span class="text-brand-600 font-bold">KES 700</span>
+                <h4 class="font-bold text-gray-900 text-lg">Broiler Chicken</h4>
+                <span class="text-brand-600 font-extrabold text-xl">KES 700</span>
               </div>
-              <p class="text-gray-400 text-sm mb-3">Kuku wa Broiler &middot; per piece (1-1.2kg)</p>
-              <button onclick="orderProduct('Broiler Chicken', '1 piece')" class="w-full bg-whatsapp text-white py-2 rounded-lg font-semibold hover:bg-green-600 transition text-sm">
+              <p class="text-gray-400 text-sm mb-4">Kuku wa Broiler &middot; per piece (1-1.2kg)</p>
+              <button onclick="orderProduct('Broiler Chicken', '1 piece')" class="w-full bg-accent-500 text-white py-3 rounded-xl font-semibold hover:bg-accent-600 transition text-sm flex items-center justify-center gap-2 shadow-sm hover:shadow-md">
+                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
                 Order on WhatsApp
               </button>
             </div>
@@ -246,127 +438,127 @@
       </div>
 
       <!-- Vegetables -->
-      <div>
-        <div class="flex items-center gap-3 mb-6">
+      <div class="category-section" data-category="vegetables">
+        <div class="flex items-center gap-3 mb-6 reveal">
           <h3 class="text-2xl font-bold text-brand-700">Fresh Vegetables</h3>
         </div>
-        <p class="text-gray-500 mb-2">Fresh vegetables harvested on delivery day.</p>
-        <p class="text-sm text-brand-600 font-medium mb-4">Add to a fish or chicken order for FREE delivery within Kisumu town.</p>
-        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
+        <p class="text-gray-500 mb-2 reveal">Fresh vegetables harvested on delivery day.</p>
+        <p class="text-sm text-brand-600 font-semibold mb-6 reveal bg-brand-50 inline-block px-4 py-2 rounded-lg">Add to a fish or chicken order for FREE delivery within Kisumu town.</p>
+        <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-4">
 
-          <div class="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition text-center">
-            <div class="h-32 bg-white flex items-center justify-center p-2">
-              <img src="https://res.cloudinary.com/doja7sbeg/image/upload/w_300,q_auto,f_jpg/v1770466547/allivanfresh-products/ufbr6flmqz4nnk2ythmq.webp" alt="Sukuma Wiki" class="max-w-full max-h-full object-contain rounded">
+          <div class="veggie-card bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden text-center">
+            <div class="h-36 bg-gradient-to-b from-gray-50 to-white flex items-center justify-center p-3 overflow-hidden">
+              <img src="https://res.cloudinary.com/doja7sbeg/image/upload/w_300,q_auto,f_jpg/v1770466547/allivanfresh-products/ufbr6flmqz4nnk2ythmq.webp" alt="Sukuma Wiki" class="max-w-full max-h-full object-contain">
             </div>
             <div class="p-3">
               <h4 class="font-semibold text-gray-900 text-sm">Sukuma Wiki</h4>
               <p class="text-gray-400 text-xs">Kale</p>
-              <p class="text-brand-600 font-bold mt-1">KES 60<span class="text-gray-400 font-normal text-xs">/bunch</span></p>
+              <p class="text-brand-600 font-bold mt-1 text-lg">KES 60<span class="text-gray-400 font-normal text-xs">/bunch</span></p>
             </div>
           </div>
 
-          <div class="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition text-center">
-            <div class="h-32 bg-white flex items-center justify-center p-2">
-              <img src="https://res.cloudinary.com/doja7sbeg/image/upload/w_300,q_auto,f_jpg/v1770466561/allivanfresh-products/lwngqkgknrmpylbxayor.jpg" alt="Spinach" class="max-w-full max-h-full object-contain rounded">
+          <div class="veggie-card bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden text-center">
+            <div class="h-36 bg-gradient-to-b from-gray-50 to-white flex items-center justify-center p-3 overflow-hidden">
+              <img src="https://res.cloudinary.com/doja7sbeg/image/upload/w_300,q_auto,f_jpg/v1770466561/allivanfresh-products/lwngqkgknrmpylbxayor.jpg" alt="Spinach" class="max-w-full max-h-full object-contain">
             </div>
             <div class="p-3">
               <h4 class="font-semibold text-gray-900 text-sm">Spinach</h4>
               <p class="text-gray-400 text-xs">Mchicha</p>
-              <p class="text-brand-600 font-bold mt-1">KES 60<span class="text-gray-400 font-normal text-xs">/bunch</span></p>
+              <p class="text-brand-600 font-bold mt-1 text-lg">KES 60<span class="text-gray-400 font-normal text-xs">/bunch</span></p>
             </div>
           </div>
 
-          <div class="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition text-center">
-            <div class="h-32 bg-white flex items-center justify-center p-2">
-              <img src="https://res.cloudinary.com/doja7sbeg/image/upload/w_300,q_auto,f_jpg/v1770466624/allivanfresh-products/ndggfyjdfsdwb3m25yso.avif" alt="Cabbage" class="max-w-full max-h-full object-contain rounded">
+          <div class="veggie-card bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden text-center">
+            <div class="h-36 bg-gradient-to-b from-gray-50 to-white flex items-center justify-center p-3 overflow-hidden">
+              <img src="https://res.cloudinary.com/doja7sbeg/image/upload/w_300,q_auto,f_jpg/v1770466624/allivanfresh-products/ndggfyjdfsdwb3m25yso.avif" alt="Cabbage" class="max-w-full max-h-full object-contain">
             </div>
             <div class="p-3">
               <h4 class="font-semibold text-gray-900 text-sm">Cabbage</h4>
               <p class="text-gray-400 text-xs">Kabichi</p>
-              <p class="text-brand-600 font-bold mt-1">KES 100<span class="text-gray-400 font-normal text-xs">/piece</span></p>
+              <p class="text-brand-600 font-bold mt-1 text-lg">KES 100<span class="text-gray-400 font-normal text-xs">/piece</span></p>
             </div>
           </div>
 
-          <div class="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition text-center">
-            <div class="h-32 bg-white flex items-center justify-center p-2">
-              <img src="https://res.cloudinary.com/doja7sbeg/image/upload/w_300,q_auto,f_jpg/v1770466734/allivanfresh-products/dtfvcwlun2emzxhutzzr.avif" alt="Osuga / Managu" class="max-w-full max-h-full object-contain rounded">
+          <div class="veggie-card bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden text-center">
+            <div class="h-36 bg-gradient-to-b from-gray-50 to-white flex items-center justify-center p-3 overflow-hidden">
+              <img src="https://res.cloudinary.com/doja7sbeg/image/upload/w_300,q_auto,f_jpg/v1770466734/allivanfresh-products/dtfvcwlun2emzxhutzzr.avif" alt="Osuga / Managu" class="max-w-full max-h-full object-contain">
             </div>
             <div class="p-3">
               <h4 class="font-semibold text-gray-900 text-sm">Osuga / Managu</h4>
               <p class="text-gray-400 text-xs">Traditional greens</p>
-              <p class="text-brand-600 font-bold mt-1">KES 60<span class="text-gray-400 font-normal text-xs">/bundle</span></p>
+              <p class="text-brand-600 font-bold mt-1 text-lg">KES 60<span class="text-gray-400 font-normal text-xs">/bundle</span></p>
             </div>
           </div>
 
-          <div class="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition text-center">
-            <div class="h-32 bg-white flex items-center justify-center p-2">
-              <img src="https://res.cloudinary.com/doja7sbeg/image/upload/w_300,q_auto,f_jpg/v1770466768/allivanfresh-products/wfmcydvfno7qpbbf9xea.webp" alt="Irish Potatoes" class="max-w-full max-h-full object-contain rounded">
+          <div class="veggie-card bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden text-center">
+            <div class="h-36 bg-gradient-to-b from-gray-50 to-white flex items-center justify-center p-3 overflow-hidden">
+              <img src="https://res.cloudinary.com/doja7sbeg/image/upload/w_300,q_auto,f_jpg/v1770466768/allivanfresh-products/wfmcydvfno7qpbbf9xea.webp" alt="Irish Potatoes" class="max-w-full max-h-full object-contain">
             </div>
             <div class="p-3">
               <h4 class="font-semibold text-gray-900 text-sm">Irish Potatoes</h4>
               <p class="text-gray-400 text-xs">Viazi</p>
-              <p class="text-brand-600 font-bold mt-1">KES 140<span class="text-gray-400 font-normal text-xs">/kg</span></p>
+              <p class="text-brand-600 font-bold mt-1 text-lg">KES 140<span class="text-gray-400 font-normal text-xs">/kg</span></p>
             </div>
           </div>
 
-          <div class="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition text-center">
-            <div class="h-32 bg-white flex items-center justify-center p-2">
-              <img src="https://res.cloudinary.com/doja7sbeg/image/upload/w_300,q_auto,f_jpg/v1770466791/allivanfresh-products/fe1ybxcctjvnyp7dl10v.avif" alt="Capsicum" class="max-w-full max-h-full object-contain rounded">
+          <div class="veggie-card bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden text-center">
+            <div class="h-36 bg-gradient-to-b from-gray-50 to-white flex items-center justify-center p-3 overflow-hidden">
+              <img src="https://res.cloudinary.com/doja7sbeg/image/upload/w_300,q_auto,f_jpg/v1770466791/allivanfresh-products/fe1ybxcctjvnyp7dl10v.avif" alt="Capsicum" class="max-w-full max-h-full object-contain">
             </div>
             <div class="p-3">
               <h4 class="font-semibold text-gray-900 text-sm">Capsicum</h4>
               <p class="text-gray-400 text-xs">Pilipili Hoho</p>
-              <p class="text-brand-600 font-bold mt-1">KES 60<span class="text-gray-400 font-normal text-xs">/piece</span></p>
+              <p class="text-brand-600 font-bold mt-1 text-lg">KES 60<span class="text-gray-400 font-normal text-xs">/piece</span></p>
             </div>
           </div>
 
-          <div class="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition text-center">
-            <div class="h-32 bg-white flex items-center justify-center p-2">
-              <img src="https://res.cloudinary.com/doja7sbeg/image/upload/w_300,q_auto,f_jpg/v1770466807/allivanfresh-products/e8cubohablxgh9gqs3ao.webp" alt="White Onions" class="max-w-full max-h-full object-contain rounded">
+          <div class="veggie-card bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden text-center">
+            <div class="h-36 bg-gradient-to-b from-gray-50 to-white flex items-center justify-center p-3 overflow-hidden">
+              <img src="https://res.cloudinary.com/doja7sbeg/image/upload/w_300,q_auto,f_jpg/v1770466807/allivanfresh-products/e8cubohablxgh9gqs3ao.webp" alt="White Onions" class="max-w-full max-h-full object-contain">
             </div>
             <div class="p-3">
               <h4 class="font-semibold text-gray-900 text-sm">White Onions</h4>
               <p class="text-gray-400 text-xs">Vitunguu Nyeupe</p>
-              <p class="text-brand-600 font-bold mt-1">KES 120<span class="text-gray-400 font-normal text-xs">/kg</span></p>
+              <p class="text-brand-600 font-bold mt-1 text-lg">KES 120<span class="text-gray-400 font-normal text-xs">/kg</span></p>
             </div>
           </div>
 
-          <div class="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition text-center">
-            <div class="h-32 bg-white flex items-center justify-center p-2">
-              <img src="https://res.cloudinary.com/doja7sbeg/image/upload/w_300,q_auto,f_jpg/v1770466818/allivanfresh-products/x0xibe24lqjhdw5hc6fv.webp" alt="Red Onions" class="max-w-full max-h-full object-contain rounded">
+          <div class="veggie-card bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden text-center">
+            <div class="h-36 bg-gradient-to-b from-gray-50 to-white flex items-center justify-center p-3 overflow-hidden">
+              <img src="https://res.cloudinary.com/doja7sbeg/image/upload/w_300,q_auto,f_jpg/v1770466818/allivanfresh-products/x0xibe24lqjhdw5hc6fv.webp" alt="Red Onions" class="max-w-full max-h-full object-contain">
             </div>
             <div class="p-3">
               <h4 class="font-semibold text-gray-900 text-sm">Red Onions</h4>
               <p class="text-gray-400 text-xs">Vitunguu Nyekundu</p>
-              <p class="text-brand-600 font-bold mt-1">KES 110<span class="text-gray-400 font-normal text-xs">/kg</span></p>
+              <p class="text-brand-600 font-bold mt-1 text-lg">KES 110<span class="text-gray-400 font-normal text-xs">/kg</span></p>
             </div>
           </div>
 
-          <div class="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition text-center">
-            <div class="h-32 bg-white flex items-center justify-center p-2">
-              <img src="https://res.cloudinary.com/doja7sbeg/image/upload/w_300,q_auto,f_jpg/v1770466837/allivanfresh-products/jjidikcfjc6bsvkbpnd4.webp" alt="Sweet Potatoes" class="max-w-full max-h-full object-contain rounded">
+          <div class="veggie-card bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden text-center">
+            <div class="h-36 bg-gradient-to-b from-gray-50 to-white flex items-center justify-center p-3 overflow-hidden">
+              <img src="https://res.cloudinary.com/doja7sbeg/image/upload/w_300,q_auto,f_jpg/v1770466837/allivanfresh-products/jjidikcfjc6bsvkbpnd4.webp" alt="Sweet Potatoes" class="max-w-full max-h-full object-contain">
             </div>
             <div class="p-3">
               <h4 class="font-semibold text-gray-900 text-sm">Sweet Potatoes</h4>
               <p class="text-gray-400 text-xs">Viazi Vitamu</p>
-              <p class="text-brand-600 font-bold mt-1">KES 100<span class="text-gray-400 font-normal text-xs">/kg</span></p>
+              <p class="text-brand-600 font-bold mt-1 text-lg">KES 100<span class="text-gray-400 font-normal text-xs">/kg</span></p>
             </div>
           </div>
 
-          <div class="bg-white rounded-lg shadow-sm border border-gray-100 overflow-hidden hover:shadow-md transition text-center">
-            <div class="h-32 bg-white flex items-center justify-center p-2">
-              <img src="https://res.cloudinary.com/doja7sbeg/image/upload/w_300,q_auto,f_jpg/v1770466850/allivanfresh-products/fhizjc8cbawfjucwab8p.webp" alt="Tomatoes" class="max-w-full max-h-full object-contain rounded">
+          <div class="veggie-card bg-white rounded-xl shadow-sm border border-gray-100 overflow-hidden text-center">
+            <div class="h-36 bg-gradient-to-b from-gray-50 to-white flex items-center justify-center p-3 overflow-hidden">
+              <img src="https://res.cloudinary.com/doja7sbeg/image/upload/w_300,q_auto,f_jpg/v1770466850/allivanfresh-products/fhizjc8cbawfjucwab8p.webp" alt="Tomatoes" class="max-w-full max-h-full object-contain">
             </div>
             <div class="p-3">
               <h4 class="font-semibold text-gray-900 text-sm">Tomatoes</h4>
               <p class="text-gray-400 text-xs">Nyanya</p>
-              <p class="text-brand-600 font-bold mt-1">KES 120<span class="text-gray-400 font-normal text-xs">/kg</span></p>
+              <p class="text-brand-600 font-bold mt-1 text-lg">KES 120<span class="text-gray-400 font-normal text-xs">/kg</span></p>
             </div>
           </div>
 
         </div>
-        <div class="mt-6 text-center">
-          <button onclick="orderGeneral()" class="bg-whatsapp text-white px-8 py-3 rounded-full font-semibold hover:bg-green-600 transition">
+        <div class="mt-8 text-center">
+          <button onclick="orderGeneral()" class="bg-accent-500 text-white px-8 py-3.5 rounded-full font-semibold hover:bg-accent-600 transition shadow-md hover:shadow-lg text-base">
             Order Vegetables on WhatsApp
           </button>
         </div>
@@ -378,41 +570,43 @@
   <!-- ==================== HOW IT WORKS ==================== -->
   <section id="how-it-works" class="py-16 md:py-24 bg-white">
     <div class="max-w-6xl mx-auto px-4">
-      <div class="text-center mb-12">
-        <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-3">How It Works</h2>
+      <div class="text-center mb-12 reveal">
+        <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 mb-3">How It Works</h2>
         <p class="text-gray-500">Three simple steps to fresh food at your door.</p>
       </div>
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-4xl mx-auto">
 
-        <div class="text-center">
-          <div class="w-16 h-16 bg-brand-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg class="w-8 h-8 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="text-center reveal relative">
+          <div class="hidden md:block absolute top-8 left-[60%] w-[80%] border-t-2 border-dashed border-brand-200"></div>
+          <div class="w-20 h-20 bg-brand-100 rounded-2xl flex items-center justify-center mx-auto mb-5 relative z-10">
+            <span class="absolute -top-2 -right-2 w-7 h-7 bg-brand-600 text-white rounded-full flex items-center justify-center text-xs font-bold">1</span>
+            <svg class="w-10 h-10 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"/>
             </svg>
           </div>
-          <div class="text-sm font-bold text-brand-600 mb-1">Step 1</div>
           <h3 class="text-lg font-bold text-gray-900 mb-2">Browse Products</h3>
           <p class="text-gray-500 text-sm">Check our fresh products and prices right here, then decide what you want.</p>
         </div>
 
-        <div class="text-center">
-          <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg class="w-8 h-8 text-whatsapp" fill="currentColor" viewBox="0 0 24 24">
+        <div class="text-center reveal relative" style="animation-delay: 0.15s">
+          <div class="hidden md:block absolute top-8 left-[60%] w-[80%] border-t-2 border-dashed border-brand-200"></div>
+          <div class="w-20 h-20 bg-green-100 rounded-2xl flex items-center justify-center mx-auto mb-5 relative z-10">
+            <span class="absolute -top-2 -right-2 w-7 h-7 bg-whatsapp text-white rounded-full flex items-center justify-center text-xs font-bold">2</span>
+            <svg class="w-10 h-10 text-whatsapp" fill="currentColor" viewBox="0 0 24 24">
               <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
             </svg>
           </div>
-          <div class="text-sm font-bold text-brand-600 mb-1">Step 2</div>
           <h3 class="text-lg font-bold text-gray-900 mb-2">Order on WhatsApp</h3>
           <p class="text-gray-500 text-sm">Send us your order on WhatsApp. We'll confirm availability and delivery details.</p>
         </div>
 
-        <div class="text-center">
-          <div class="w-16 h-16 bg-brand-100 rounded-full flex items-center justify-center mx-auto mb-4">
-            <svg class="w-8 h-8 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="text-center reveal" style="animation-delay: 0.3s">
+          <div class="w-20 h-20 bg-brand-100 rounded-2xl flex items-center justify-center mx-auto mb-5 relative z-10">
+            <span class="absolute -top-2 -right-2 w-7 h-7 bg-brand-600 text-white rounded-full flex items-center justify-center text-xs font-bold">3</span>
+            <svg class="w-10 h-10 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 8h14M5 8a2 2 0 110-4h14a2 2 0 110 4M5 8v10a2 2 0 002 2h10a2 2 0 002-2V8m-9 4h4"/>
             </svg>
           </div>
-          <div class="text-sm font-bold text-brand-600 mb-1">Step 3</div>
           <h3 class="text-lg font-bold text-gray-900 mb-2">Delivered Fresh</h3>
           <p class="text-gray-500 text-sm">We harvest fresh the morning of delivery and bring it straight to your door. Pay with M-PESA.</p>
         </div>
@@ -425,50 +619,125 @@
   <!-- ==================== FRESHNESS PROMISE ==================== -->
   <section id="freshness" class="py-16 md:py-24 bg-brand-700 text-white">
     <div class="max-w-6xl mx-auto px-4">
-      <div class="text-center mb-12">
-        <h2 class="text-3xl md:text-4xl font-bold mb-3">Why AllivanFresh?</h2>
+      <div class="text-center mb-12 reveal">
+        <h2 class="text-3xl md:text-4xl font-extrabold mb-3">Why AllivanFresh?</h2>
         <p class="text-brand-200 max-w-xl mx-auto">We do things differently. No middlemen, no cold storage — just fresh food from source to your table.</p>
       </div>
       <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
 
-        <div class="bg-white/10 rounded-xl p-6 backdrop-blur-sm">
-          <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center mb-4">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="bg-white/10 rounded-2xl p-6 backdrop-blur-sm border border-white/10 hover:bg-white/20 transition reveal">
+          <div class="w-14 h-14 bg-yellow-400/20 rounded-xl flex items-center justify-center mb-4">
+            <svg class="w-7 h-7 text-yellow-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
             </svg>
           </div>
           <h3 class="font-bold text-lg mb-2">Same-Day Harvest</h3>
-          <p class="text-brand-200 text-sm">Everything is sourced the same morning we deliver. You get it at peak freshness.</p>
+          <p class="text-brand-200 text-sm leading-relaxed">Everything is sourced the same morning we deliver. You get it at peak freshness.</p>
         </div>
 
-        <div class="bg-white/10 rounded-xl p-6 backdrop-blur-sm">
-          <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center mb-4">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9.75 17L9 20l-1 1h8l-1-1-.75-3M3 13h18M5 17h14a2 2 0 002-2V5a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+        <div class="bg-white/10 rounded-2xl p-6 backdrop-blur-sm border border-white/10 hover:bg-white/20 transition reveal" style="animation-delay: 0.1s">
+          <div class="w-14 h-14 bg-blue-400/20 rounded-xl flex items-center justify-center mb-4">
+            <svg class="w-7 h-7 text-blue-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636a9 9 0 11-12.728 0M12 3v9"/>
             </svg>
           </div>
           <h3 class="font-bold text-lg mb-2">No Refrigeration</h3>
-          <p class="text-brand-200 text-sm">Our food is so fresh, we don't need to refrigerate it. From the farm to you, same day.</p>
+          <p class="text-brand-200 text-sm leading-relaxed">Our food is so fresh, we don't need to refrigerate it. From the farm to you, same day.</p>
         </div>
 
-        <div class="bg-white/10 rounded-xl p-6 backdrop-blur-sm">
-          <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center mb-4">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="bg-white/10 rounded-2xl p-6 backdrop-blur-sm border border-white/10 hover:bg-white/20 transition reveal" style="animation-delay: 0.2s">
+          <div class="w-14 h-14 bg-green-400/20 rounded-xl flex items-center justify-center mb-4">
+            <svg class="w-7 h-7 text-green-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0"/>
             </svg>
           </div>
           <h3 class="font-bold text-lg mb-2">Free Delivery</h3>
-          <p class="text-brand-200 text-sm">Order fish or chicken and get FREE delivery within Kisumu town. No hidden charges.</p>
+          <p class="text-brand-200 text-sm leading-relaxed">Order fish or chicken and get FREE delivery within Kisumu town. No hidden charges.</p>
         </div>
 
-        <div class="bg-white/10 rounded-xl p-6 backdrop-blur-sm">
-          <div class="w-12 h-12 bg-white/20 rounded-lg flex items-center justify-center mb-4">
-            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div class="bg-white/10 rounded-2xl p-6 backdrop-blur-sm border border-white/10 hover:bg-white/20 transition reveal" style="animation-delay: 0.3s">
+          <div class="w-14 h-14 bg-purple-400/20 rounded-xl flex items-center justify-center mb-4">
+            <svg class="w-7 h-7 text-purple-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/>
             </svg>
           </div>
           <h3 class="font-bold text-lg mb-2">Quality Guarantee</h3>
-          <p class="text-brand-200 text-sm">Not fresh? We replace it free on your next delivery. No questions asked.</p>
+          <p class="text-brand-200 text-sm leading-relaxed">Not fresh? We replace it free on your next delivery. No questions asked.</p>
+        </div>
+
+      </div>
+    </div>
+  </section>
+
+
+  <!-- ==================== TESTIMONIALS ==================== -->
+  <section id="testimonials" class="py-16 md:py-24 bg-gray-50">
+    <div class="max-w-6xl mx-auto px-4">
+      <div class="text-center mb-12 reveal">
+        <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 mb-3">What Our Customers Say</h2>
+        <p class="text-gray-500">Real feedback from our happy customers in Kisumu.</p>
+      </div>
+
+      <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+
+        <div class="testimonial-card bg-white rounded-2xl shadow-sm border border-gray-100 p-6 reveal">
+          <div class="flex items-center gap-1 mb-3">
+            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          </div>
+          <p class="text-gray-600 text-sm leading-relaxed mb-4">"The tilapia was incredibly fresh — you could tell it came straight from the lake. My family loved it! Delivery was on time and the price is fair."</p>
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-brand-100 rounded-full flex items-center justify-center">
+              <span class="text-brand-700 font-bold text-sm">MO</span>
+            </div>
+            <div>
+              <p class="font-semibold text-gray-900 text-sm">Mary Otieno</p>
+              <p class="text-gray-400 text-xs">Milimani, Kisumu</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card bg-white rounded-2xl shadow-sm border border-gray-100 p-6 reveal" style="animation-delay: 0.1s">
+          <div class="flex items-center gap-1 mb-3">
+            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          </div>
+          <p class="text-gray-600 text-sm leading-relaxed mb-4">"I order kienyeji chicken every week from AllivanFresh. It's the real deal — authentic free-range taste. The WhatsApp ordering is so convenient!"</p>
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center">
+              <span class="text-orange-700 font-bold text-sm">JW</span>
+            </div>
+            <div>
+              <p class="font-semibold text-gray-900 text-sm">James Wafula</p>
+              <p class="text-gray-400 text-xs">Nyalenda, Kisumu</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="testimonial-card bg-white rounded-2xl shadow-sm border border-gray-100 p-6 reveal" style="animation-delay: 0.2s">
+          <div class="flex items-center gap-1 mb-3">
+            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+            <svg class="w-5 h-5 text-yellow-400" fill="currentColor" viewBox="0 0 20 20"><path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/></svg>
+          </div>
+          <p class="text-gray-600 text-sm leading-relaxed mb-4">"Best vegetables in Kisumu! The sukuma wiki and managu are always so fresh and green. Love that they deliver to my doorstep. Highly recommend!"</p>
+          <div class="flex items-center gap-3">
+            <div class="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center">
+              <span class="text-purple-700 font-bold text-sm">AN</span>
+            </div>
+            <div>
+              <p class="font-semibold text-gray-900 text-sm">Akinyi Nyong'o</p>
+              <p class="text-gray-400 text-xs">Tom Mboya Estate, Kisumu</p>
+            </div>
+          </div>
         </div>
 
       </div>
@@ -477,15 +746,15 @@
 
 
   <!-- ==================== FAQ ==================== -->
-  <section id="faq" class="py-16 md:py-24 bg-gray-50">
+  <section id="faq" class="py-16 md:py-24 bg-white">
     <div class="max-w-3xl mx-auto px-4">
-      <div class="text-center mb-12">
-        <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-3">Frequently Asked Questions</h2>
+      <div class="text-center mb-12 reveal">
+        <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 mb-3">Frequently Asked Questions</h2>
       </div>
 
       <div class="space-y-3">
 
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+        <div class="bg-gray-50 rounded-xl border border-gray-100 reveal">
           <button class="faq-toggle w-full text-left px-6 py-4 flex justify-between items-center" aria-expanded="false">
             <span class="font-semibold text-gray-900">What areas do you deliver to?</span>
             <svg class="faq-chevron w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -497,7 +766,7 @@
           </div>
         </div>
 
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+        <div class="bg-gray-50 rounded-xl border border-gray-100 reveal">
           <button class="faq-toggle w-full text-left px-6 py-4 flex justify-between items-center" aria-expanded="false">
             <span class="font-semibold text-gray-900">How does delivery pricing work?</span>
             <svg class="faq-chevron w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -509,7 +778,7 @@
           </div>
         </div>
 
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+        <div class="bg-gray-50 rounded-xl border border-gray-100 reveal">
           <button class="faq-toggle w-full text-left px-6 py-4 flex justify-between items-center" aria-expanded="false">
             <span class="font-semibold text-gray-900">What payment methods do you accept?</span>
             <svg class="faq-chevron w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -521,7 +790,7 @@
           </div>
         </div>
 
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+        <div class="bg-gray-50 rounded-xl border border-gray-100 reveal">
           <button class="faq-toggle w-full text-left px-6 py-4 flex justify-between items-center" aria-expanded="false">
             <span class="font-semibold text-gray-900">When will my order arrive?</span>
             <svg class="faq-chevron w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -533,7 +802,7 @@
           </div>
         </div>
 
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+        <div class="bg-gray-50 rounded-xl border border-gray-100 reveal">
           <button class="faq-toggle w-full text-left px-6 py-4 flex justify-between items-center" aria-expanded="false">
             <span class="font-semibold text-gray-900">Can I order vegetables only?</span>
             <svg class="faq-chevron w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -545,7 +814,7 @@
           </div>
         </div>
 
-        <div class="bg-white rounded-xl shadow-sm border border-gray-100">
+        <div class="bg-gray-50 rounded-xl border border-gray-100 reveal">
           <button class="faq-toggle w-full text-left px-6 py-4 flex justify-between items-center" aria-expanded="false">
             <span class="font-semibold text-gray-900">How do I place an order?</span>
             <svg class="faq-chevron w-5 h-5 text-gray-400 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -568,37 +837,44 @@
       <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
 
         <div>
-          <img src="images/logo.png" alt="AllivanFresh" class="h-28 w-auto mb-4">
+          <img src="images/logo.png" alt="AllivanFresh" class="h-24 w-auto mb-4">
           <p class="text-brand-200 text-sm leading-relaxed">Premium fresh chicken, fish & vegetables delivered in Kisumu. Harvested the same day we deliver.</p>
         </div>
 
         <div>
-          <h4 class="font-semibold mb-3">Quick Links</h4>
+          <h4 class="font-semibold mb-4 text-lg">Quick Links</h4>
           <ul class="space-y-2 text-brand-200 text-sm">
             <li><a href="#products" class="hover:text-white transition">Our Products</a></li>
             <li><a href="#how-it-works" class="hover:text-white transition">How It Works</a></li>
             <li><a href="#freshness" class="hover:text-white transition">Why AllivanFresh</a></li>
+            <li><a href="#testimonials" class="hover:text-white transition">Customer Reviews</a></li>
             <li><a href="#faq" class="hover:text-white transition">FAQ</a></li>
           </ul>
         </div>
 
         <div>
-          <h4 class="font-semibold mb-3">Contact Us</h4>
-          <ul class="space-y-2 text-brand-200 text-sm">
+          <h4 class="font-semibold mb-4 text-lg">Contact Us</h4>
+          <ul class="space-y-3 text-brand-200 text-sm">
             <li>
-              <a id="footer-wa" href="#" class="hover:text-white transition flex items-center gap-2">
-                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+              <a id="footer-wa" href="#" class="hover:text-white transition flex items-center gap-3">
+                <div class="w-8 h-8 bg-whatsapp/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <svg class="w-4 h-4 text-whatsapp" fill="currentColor" viewBox="0 0 24 24"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+                </div>
                 WhatsApp Us
               </a>
             </li>
             <li>
-              <a href="mailto:allivanfresh@gmail.com" class="hover:text-white transition flex items-center gap-2">
-                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+              <a href="mailto:allivanfresh@gmail.com" class="hover:text-white transition flex items-center gap-3">
+                <div class="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                  <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/></svg>
+                </div>
                 allivanfresh@gmail.com
               </a>
             </li>
-            <li class="flex items-center gap-2">
-              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+            <li class="flex items-center gap-3">
+              <div class="w-8 h-8 bg-white/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+              </div>
               Kisumu, Kenya
             </li>
           </ul>
@@ -624,7 +900,6 @@
   <!-- ==================== JAVASCRIPT ==================== -->
   <script>
     // ========== CONFIGURATION ==========
-    // Update your WhatsApp number here (with country code, no + sign)
     const CONFIG = {
       whatsappNumber: '254721404517',
       whatsappMessage: 'Hi! I want to order from AllivanFresh',
@@ -632,12 +907,12 @@
 
     // ========== WhatsApp Link Helpers ==========
     function getWhatsAppLink(message) {
-      const msg = message || CONFIG.whatsappMessage;
+      var msg = message || CONFIG.whatsappMessage;
       return 'https://wa.me/' + CONFIG.whatsappNumber + '?text=' + encodeURIComponent(msg);
     }
 
     function orderProduct(name, quantity) {
-      const msg = 'Hi! I want to order ' + name + ' (' + quantity + ')';
+      var msg = 'Hi! I want to order ' + name + ' (' + quantity + ')';
       window.open(getWhatsAppLink(msg), '_blank');
     }
 
@@ -647,8 +922,8 @@
 
     // ========== Set all WhatsApp links ==========
     function initWhatsAppLinks() {
-      const link = getWhatsAppLink();
-      var els = ['nav-cta', 'mobile-cta', 'hero-cta', 'footer-wa', 'float-wa'];
+      var link = getWhatsAppLink();
+      var els = ['nav-cta', 'mobile-cta', 'hero-cta', 'footer-wa', 'float-wa', 'promo-cta'];
       els.forEach(function(id) {
         var el = document.getElementById(id);
         if (el) el.href = link;
@@ -665,7 +940,6 @@
         menu.classList.toggle('hidden');
       });
 
-      // Close menu when a link is clicked
       var links = menu.querySelectorAll('.mobile-link');
       links.forEach(function(link) {
         link.addEventListener('click', function() {
@@ -683,12 +957,10 @@
           var chevron = this.querySelector('.faq-chevron');
           var isOpen = answer.classList.contains('open');
 
-          // Close all others
           document.querySelectorAll('.faq-answer').forEach(function(a) { a.classList.remove('open'); });
           document.querySelectorAll('.faq-chevron').forEach(function(c) { c.classList.remove('open'); });
           document.querySelectorAll('.faq-toggle').forEach(function(t) { t.setAttribute('aria-expanded', 'false'); });
 
-          // Toggle current
           if (!isOpen) {
             answer.classList.add('open');
             chevron.classList.add('open');
@@ -698,11 +970,53 @@
       });
     }
 
+    // ========== Category Filter ==========
+    function filterCategory(cat) {
+      // Update pills
+      document.querySelectorAll('.cat-pill').forEach(function(pill) {
+        pill.classList.remove('active', 'bg-brand-600', 'text-white');
+        pill.classList.add('bg-white', 'text-gray-700');
+        if (pill.dataset.cat === cat) {
+          pill.classList.add('active', 'bg-brand-600', 'text-white');
+          pill.classList.remove('bg-white', 'text-gray-700');
+        }
+      });
+
+      // Show/hide sections
+      document.querySelectorAll('.category-section').forEach(function(section) {
+        if (cat === 'all' || section.dataset.category === cat) {
+          section.style.display = '';
+        } else {
+          section.style.display = 'none';
+        }
+      });
+
+      // Show/hide promo banner (always visible unless filtering to single category)
+      var promoBanner = document.querySelector('.reveal.mb-12');
+    }
+
+    // ========== Scroll Reveal ==========
+    function initScrollReveal() {
+      var reveals = document.querySelectorAll('.reveal');
+      var observer = new IntersectionObserver(function(entries) {
+        entries.forEach(function(entry) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add('visible');
+          }
+        });
+      }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
+
+      reveals.forEach(function(el) {
+        observer.observe(el);
+      });
+    }
+
     // ========== Initialize ==========
     document.addEventListener('DOMContentLoaded', function() {
       initWhatsAppLinks();
       initMobileMenu();
       initFAQ();
+      initScrollReveal();
     });
   </script>
 
